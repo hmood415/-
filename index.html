@@ -120,7 +120,7 @@
 <div id="app"></div>
 
 <script type="text/babel" data-presets="react">
-const { useState, useEffect } = React;
+const { useState, useEffect, useMemo, useCallback } = React;
 
 /* ── SUPABASE ──
    ضع بيانات مشروعك هنا بعد إنشاء المشروع في supabase.com
@@ -132,26 +132,86 @@ const db = (SUPABASE_URL.includes("HERE"))
   ? null
   : supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 
+/* ── THEME & COLORS ── */
+const THEME = {
+  primary:   "#8569A1",
+  primary2:  "#A086BE",
+  primary3:  "#B7A4D0",
+  primaryBg: "#EDE8F8",
+  primaryBg2:"#F8F5FC",
+  purple:    "#6E60A3",
+  purpleBg:  "#ECEAF8",
+  blue:      "#3F7BAA",
+  blueBg:    "#E3EFF8",
+  green:     "#4E9244",
+  greenBg:   "#E5F2E3",
+  bg:        "#F5F3FC",
+  text:      "#2A1A35",
+  textSub:   "#7A6488",
+  border:    "#D3CDEF",
+  star:      "#F0A500",
+  success:   "#25D366",
+  error:     "#D35454",
+  errorBg:   "#FFF0F0",
+  errorBorder: "#FFD5D5"
+};
+
+const ANIMATIONS = {
+  fadeUp:  "fadeUp .38s cubic-bezier(.22,1,.36,1) both",
+  scaleIn: "scaleIn .32s cubic-bezier(.22,1,.36,1) both"
+};
+
+/* ── UTILITY FUNCTIONS ── */
+
+const validatePhone = phone => phone.replace(/\D/g,"").length >= 9;
+
+const validateName = name => name?.trim()?.length > 0;
+
+const formatDateForDB = (day, month) => {
+  const date = new Date(2026, month, day);
+  return `${day} ${MONTHS[month]} 2026`;
+};
+
+const formatDateFromDB = ds => {
+  if (!ds) return "";
+  return ds.includes("-")
+    ? (() => { const[y,m,d]=ds.split("-"); return `${d} ${MONTHS[+m-1]} ${y}`; })()
+    : ds;
+};
+
+const getServiceIcon = title =>
+  title.includes("انطاق") ? "speech"
+  : title.includes("طعام")  ? "food"
+  : title.includes("تواصل") ? "social" : "skills";
+
 async function saveClient(name, phone) {
   if (!db) return;
-  await db.from("clients").upsert({ name, phone }, { onConflict: "phone" });
+  try {
+    await db.from("clients").upsert({ name, phone }, { onConflict: "phone" });
+  } catch (err) {
+    console.error("Error saving client:", err);
+  }
 }
 
 async function saveBooking(bk) {
   if (!db) return;
-  await db.from("bookings").insert({
-    client_phone:  bk.userInfo.phone,
-    client_name:   bk.userInfo.name,
-    service_title: bk.svc.title,
-    provider_name: bk.p.name,
-    provider_spec: bk.p.spec,
-    booking_date:  `${bk.day} ${MONTHS[5]} 2026`,
-    booking_time:  bk.time,
-    duration_label:bk.dur.label,
-    duration_id:   bk.dur.id,
-    cost:          bk.cost,
-    status:        "upcoming"
-  });
+  try {
+    await db.from("bookings").insert({
+      client_phone:  bk.userInfo.phone,
+      client_name:   bk.userInfo.name,
+      service_title: bk.svc.title,
+      provider_name: bk.p.name,
+      provider_spec: bk.p.spec,
+      booking_date:  formatDateForDB(bk.day, 5),
+      booking_time:  bk.time,
+      duration_label:bk.dur.label,
+      duration_id:   bk.dur.id,
+      cost:          bk.cost,
+      status:        "upcoming"
+    });
+  } catch (err) {
+    console.error("Error saving booking:", err);
+  }
 }
 
 /* ── DATA ── */
@@ -485,16 +545,24 @@ const Ico = {
   ),
 };
 
-/* ── SHARED ── */
+/* ── SHARED COMPONENTS ── */
 
 function Avatar({ p, size=60 }) {
+  const gradColor = p.av.bg;
   return (
     <div style={{
-      width:size,height:size,borderRadius:"50%",
-      background:`linear-gradient(145deg,${p.av.bg},${p.av.bg}BB)`,
-      display:"flex",alignItems:"center",justifyContent:"center",
-      color:"white",fontWeight:900,fontSize:size*.28,flexShrink:0,
-      boxShadow:`0 4px 16px ${p.av.bg}50, 0 0 0 3px ${p.av.bg}20`
+      width: size,
+      height: size,
+      borderRadius: "50%",
+      background: `linear-gradient(145deg,${gradColor},${gradColor}BB)`,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      color: "white",
+      fontWeight: 900,
+      fontSize: size * 0.28,
+      flexShrink: 0,
+      boxShadow: `0 4px 16px ${gradColor}50, 0 0 0 3px ${gradColor}20`
     }}>
       {p.av.in}
     </div>
@@ -502,29 +570,81 @@ function Avatar({ p, size=60 }) {
 }
 
 function StarsRow({ rating }) {
+  const stars = useMemo(() => (
+    [1, 2, 3, 4, 5].map(i => (
+      <span key={i}>{Ico.star(i <= Math.floor(rating))}</span>
+    ))
+  ), [rating]);
+
   return (
-    <div style={{display:"flex",alignItems:"center",gap:2}}>
-      {[1,2,3,4,5].map(i=>(
-        <span key={i}>{Ico.star(i<=Math.floor(rating))}</span>
-      ))}
-      <span style={{fontSize:11,color:"var(--txts)",marginRight:4,fontWeight:700}}>{rating}</span>
+    <div style={{ display: "flex", alignItems: "center", gap: 2 }}>
+      {stars}
+      <span style={{
+        fontSize: 11,
+        color: THEME.textSub,
+        marginRight: 4,
+        fontWeight: 700
+      }}>
+        {rating}
+      </span>
     </div>
   );
 }
 
 function PageHdr({ grad, onBack, children }) {
+  const defaultGrad = "linear-gradient(145deg,#3D2868,#8569A1,#B7A4D0)";
   return (
     <div style={{
-      background:grad||"linear-gradient(145deg,#3D2868,#8569A1,#B7A4D0)",
-      padding:"54px 20px 28px",color:"white",
-      position:"relative",overflow:"hidden"
+      background: grad || defaultGrad,
+      padding: "54px 20px 28px",
+      color: "white",
+      position: "relative",
+      overflow: "hidden"
     }}>
-      <div style={{position:"absolute",top:-50,left:-50,width:160,height:160,
-        borderRadius:"50%",background:"rgba(255,255,255,.07)"}}/>
-      <div style={{position:"absolute",bottom:-35,right:-10,width:120,height:120,
-        borderRadius:"50%",background:"rgba(255,255,255,.05)"}}/>
-      <div style={{position:"relative"}}>
-        {onBack && <button className="backbtn" onClick={onBack}>{Ico.back()} رجوع</button>}
+      <div style={{
+        position: "absolute",
+        top: -50,
+        left: -50,
+        width: 160,
+        height: 160,
+        borderRadius: "50%",
+        background: "rgba(255,255,255,.07)"
+      }} />
+      <div style={{
+        position: "absolute",
+        bottom: -35,
+        right: -10,
+        width: 120,
+        height: 120,
+        borderRadius: "50%",
+        background: "rgba(255,255,255,.05)"
+      }} />
+      <div style={{ position: "relative" }}>
+        {onBack && (
+          <button
+            className="backbtn"
+            onClick={onBack}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              background: "rgba(255,255,255,.18)",
+              backdropFilter: "blur(6px)",
+              border: "1px solid rgba(255,255,255,.3)",
+              borderRadius: 12,
+              color: "white",
+              padding: "8px 14px",
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: "pointer",
+              marginBottom: 20,
+              fontFamily: "'Tajawal',sans-serif",
+              transition: "transform .15s"
+            }}
+          >
+            {Ico.back()} رجوع
+          </button>
+        )}
         {children}
       </div>
     </div>
@@ -533,13 +653,29 @@ function PageHdr({ grad, onBack, children }) {
 
 /* ── TARGET PILLS ── */
 function TargetPills({ targets, acc, bg }) {
+  const pills = useMemo(() => targets.map(t => (
+    <span
+      key={t}
+      className="tpill"
+      style={{
+        background: bg,
+        color: acc,
+        border: `1px solid ${acc}30`,
+        transition: "all .2s"
+      }}
+    >
+      ✦ {t}
+    </span>
+  )), [targets, acc, bg]);
+
   return (
-    <div style={{display:"flex",gap:5,flexWrap:"wrap",marginTop:8}}>
-      {targets.map(t => (
-        <span key={t} className="tpill" style={{background:bg,color:acc,border:`1px solid ${acc}30`}}>
-          ✦ {t}
-        </span>
-      ))}
+    <div style={{
+      display: "flex",
+      gap: 5,
+      flexWrap: "wrap",
+      marginTop: 8
+    }}>
+      {pills}
     </div>
   );
 }
@@ -867,18 +1003,38 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
 /* ── USER INFO PAGE ── */
 
 function UserInfoPage({ prov, svc, onNext, onBack }) {
-  const [name,  setName]  = useState("");
+  const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
-  const [err,   setErr]   = useState("");
+  const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const next = () => {
-    if(!name.trim())        { setErr("يرجى إدخال اسمك الكامل"); return; }
-    if(phone.replace(/\D/g,"").length < 9) {
-      setErr("يرجى إدخال رقم جوال صحيح"); return;
+  const clearError = useCallback(() => setErr(""), []);
+
+  const validateForm = useCallback(() => {
+    if (!validateName(name)) {
+      setErr("يرجى إدخال اسمك الكامل");
+      return false;
     }
+    if (!validatePhone(phone)) {
+      setErr("يرجى إدخال رقم جوال صحيح (على الأقل 9 أرقام)");
+      return false;
+    }
+    return true;
+  }, [name, phone]);
+
+  const handleNext = useCallback(async () => {
+    if (!validateForm()) return;
     setErr("");
-    onNext({ name: name.trim(), phone: phone.trim() });
-  };
+    setLoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      onNext({ name: name.trim(), phone: phone.trim() });
+    } catch (error) {
+      setErr("حدث خطأ ما. يرجى المحاولة لاحقاً");
+    } finally {
+      setLoading(false);
+    }
+  }, [validateForm, name, phone, onNext]);
 
   return (
     <div className="page">
@@ -911,11 +1067,14 @@ function UserInfoPage({ prov, svc, onNext, onBack }) {
         </div>
 
         {/* Form */}
-        <div style={{display:"flex",flexDirection:"column",gap:18}}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
           <div>
             <label style={{
-              display:"block",fontSize:13,fontWeight:700,
-              color:"var(--txt)",marginBottom:8
+              display: "block",
+              fontSize: 13,
+              fontWeight: 700,
+              color: THEME.text,
+              marginBottom: 8
             }}>
               الاسم الكامل *
             </label>
@@ -923,30 +1082,46 @@ function UserInfoPage({ prov, svc, onNext, onBack }) {
               className="inp"
               placeholder="مثال: أحمد محمد العتيبي"
               value={name}
-              onChange={e=>{ setName(e.target.value); setErr(""); }}
+              onChange={e => { setName(e.target.value); clearError(); }}
+              disabled={loading}
+              style={{
+                opacity: loading ? 0.6 : 1,
+                cursor: loading ? "not-allowed" : "text"
+              }}
             />
           </div>
 
           <div>
             <label style={{
-              display:"block",fontSize:13,fontWeight:700,
-              color:"var(--txt)",marginBottom:8
+              display: "block",
+              fontSize: 13,
+              fontWeight: 700,
+              color: THEME.text,
+              marginBottom: 8
             }}>
               رقم الجوال *
             </label>
-            <div style={{position:"relative"}}>
+            <div style={{ position: "relative" }}>
               <input
                 className="inp"
                 placeholder="05XXXXXXXX"
                 value={phone}
                 type="tel"
                 maxLength={10}
-                onChange={e=>{ setPhone(e.target.value); setErr(""); }}
-                style={{paddingRight:46}}
+                onChange={e => { setPhone(e.target.value); clearError(); }}
+                disabled={loading}
+                style={{
+                  paddingRight: 46,
+                  opacity: loading ? 0.6 : 1,
+                  cursor: loading ? "not-allowed" : "text"
+                }}
               />
               <div style={{
-                position:"absolute",right:14,top:"50%",
-                transform:"translateY(-50%)"
+                position: "absolute",
+                right: 14,
+                top: "50%",
+                transform: "translateY(-50%)",
+                opacity: loading ? 0.5 : 1
               }}>
                 {Ico.phone()}
               </div>
@@ -955,22 +1130,63 @@ function UserInfoPage({ prov, svc, onNext, onBack }) {
 
           {err && (
             <div style={{
-              background:"#FFF0F0",border:"1px solid #FFD5D5",
-              borderRadius:12,padding:"10px 14px",
-              fontSize:12,fontWeight:600,color:"#D35454",
-              display:"flex",alignItems:"center",gap:8
+              background: THEME.errorBg,
+              border: `1px solid ${THEME.errorBorder}`,
+              borderRadius: 12,
+              padding: "10px 14px",
+              fontSize: 12,
+              fontWeight: 600,
+              color: THEME.error,
+              display: "flex",
+              alignItems: "center",
+              gap: 8,
+              animation: ANIMATIONS.fadeUp
             }}>
               ⚠️ {err}
             </div>
           )}
 
-          <button className="btn" onClick={next} style={{
-            background:"linear-gradient(145deg,#8569A1,#B7A4D0)",
-            color:"white",borderRadius:18,padding:18,
-            fontSize:15,fontWeight:800,width:"100%",
-            boxShadow:"0 8px 28px rgba(133,105,161,.28)"
-          }}>
-            متابعة لاختيار الموعد →
+          <button
+            className="btn"
+            onClick={handleNext}
+            disabled={loading}
+            style={{
+              background: loading
+                ? THEME.border
+                : "linear-gradient(145deg," + THEME.primary + "," + THEME.primary3 + ")",
+              color: "white",
+              borderRadius: 18,
+              padding: 18,
+              fontSize: 15,
+              fontWeight: 800,
+              width: "100%",
+              boxShadow: loading
+                ? "none"
+                : `0 8px 28px rgba(133,105,161,.28)`,
+              cursor: loading ? "not-allowed" : "pointer",
+              opacity: loading ? 0.8 : 1,
+              transition: "all .2s",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 8
+            }}
+          >
+            {loading ? (
+              <>
+                <div style={{
+                  width: 14,
+                  height: 14,
+                  borderRadius: "50%",
+                  border: "2px solid rgba(255,255,255,.3)",
+                  borderTopColor: "white",
+                  animation: "spin .8s linear infinite"
+                }} />
+                جارٍ المتابعة...
+              </>
+            ) : (
+              "متابعة لاختيار الموعد →"
+            )}
           </button>
         </div>
       </div>
@@ -1329,31 +1545,29 @@ function ApptsPage({ userInfo }) {
       });
   }, [userInfo?.phone]);
 
-  // إذا وُجد اتصال بقاعدة البيانات استخدمها، وإلا استخدم البيانات التجريبية
-  const allAppts = dbAppts !== null ? dbAppts.map(a => ({
-    id:     a.id,
-    svc:    a.service_title,
-    icon:   a.service_title.includes("انطاق") ? "speech"
-          : a.service_title.includes("طعام")  ? "food"
-          : a.service_title.includes("تواصل") ? "social" : "skills",
-    prov:   a.provider_name,
-    date:   a.booking_date,
-    time:   a.booking_time,
-    dur:    a.duration_label,
-    status: a.status === "completed" ? "completed" : "upcoming",
-    cost:   a.cost,
-    fromDB: true
-  })) : APPTS;
+  const allAppts = useMemo(() =>
+    dbAppts !== null ? dbAppts.map(a => ({
+      id: a.id,
+      svc: a.service_title,
+      icon: getServiceIcon(a.service_title),
+      prov: a.provider_name,
+      date: a.booking_date,
+      time: a.booking_time,
+      dur: a.duration_label,
+      status: a.status === "completed" ? "completed" : "upcoming",
+      cost: a.cost,
+      fromDB: true
+    })) : APPTS,
+    [dbAppts]
+  );
 
-  const up   = allAppts.filter(a=>a.status==="upcoming");
-  const done = allAppts.filter(a=>a.status==="completed");
-  const list = tab==="upcoming" ? up : done;
+  const [up, done] = useMemo(() => {
+    const upcoming = allAppts.filter(a => a.status === "upcoming");
+    const completed = allAppts.filter(a => a.status === "completed");
+    return [upcoming, completed];
+  }, [allAppts]);
 
-  const fmt = ds => {
-    if (!ds) return "";
-    if (ds.includes("-")) { const[y,m,d]=ds.split("-"); return `${d} ${MONTHS[+m-1]} ${y}`; }
-    return ds; // already formatted string from DB
-  };
+  const list = useMemo(() => tab === "upcoming" ? up : done, [tab, up, done]);
 
   return (
     <div className="page">
@@ -1480,13 +1694,23 @@ function ApptsPage({ userInfo }) {
 /* ── PROFILE PAGE ── */
 
 function ProfilePage({ userInfo }) {
-  const [notif,setNotif] = useState(true);
-  const name  = userInfo?.name  || "أحمد محمد";
+  const [notif, setNotif] = useState(true);
+  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const name = userInfo?.name || "أحمد محمد";
   const phone = userInfo?.phone || "+966 54 237 8596";
 
-  const joinSpec = () => {
+  const joinSpec = useCallback(() => {
     openWA("مرحباً، أود تقديم طلب الانضمام كمختص في منصة انطاق و إدراك 🌿\n\nأرجو إعلامي بالخطوات والمتطلبات اللازمة للانضمام. شكراً 🙏");
-  };
+  }, []);
+
+  const handleLogout = useCallback(() => {
+    setShowLogoutConfirm(true);
+  }, []);
+
+  const confirmLogout = useCallback(() => {
+    window.location.reload();
+  }, []);
 
   return (
     <div className="page">
@@ -1643,12 +1867,106 @@ function ProfilePage({ userInfo }) {
           </div>
         </div>
 
-        <button className="btn" style={{
-          width:"100%",padding:14,borderRadius:16,
-          border:"2px solid #FFD5D5",background:"#FFF5F5",
-          color:"#D35454",fontSize:13,fontWeight:700,
-          fontFamily:"Tajawal,sans-serif"
-        }}>🚪 تسجيل الخروج</button>
+        <button
+          className="btn"
+          onClick={handleLogout}
+          style={{
+            width: "100%",
+            padding: 14,
+            borderRadius: 16,
+            border: `2px solid ${THEME.errorBorder}`,
+            background: THEME.errorBg,
+            color: THEME.error,
+            fontSize: 13,
+            fontWeight: 700,
+            fontFamily: "'Tajawal',sans-serif",
+            cursor: "pointer",
+            transition: "all .2s"
+          }}
+        >
+          🚪 تسجيل الخروج
+        </button>
+
+        {/* Logout confirmation modal */}
+        {showLogoutConfirm && (
+          <div style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0,0,0,.5)",
+            display: "flex",
+            alignItems: "flex-end",
+            zIndex: 1000,
+            animation: ANIMATIONS.fadeUp
+          }}>
+            <div style={{
+              width: "100%",
+              background: "white",
+              borderRadius: "24px 24px 0 0",
+              padding: "24px",
+              animation: ANIMATIONS.scaleIn
+            }}>
+              <h3 style={{
+                fontSize: 16,
+                fontWeight: 900,
+                color: THEME.text,
+                marginBottom: 8
+              }}>
+                تسجيل الخروج
+              </h3>
+              <p style={{
+                fontSize: 13,
+                color: THEME.textSub,
+                marginBottom: 20,
+                lineHeight: 1.6
+              }}>
+                هل أنت متأكد من رغبتك في تسجيل الخروج؟ ستحتاج إلى إدخال بياناتك مجدداً عند العودة.
+              </p>
+              <div style={{
+                display: "flex",
+                gap: 10,
+                flexDirection: "column"
+              }}>
+                <button
+                  className="btn"
+                  onClick={confirmLogout}
+                  style={{
+                    background: THEME.error,
+                    color: "white",
+                    padding: 14,
+                    borderRadius: 14,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    border: "none",
+                    width: "100%"
+                  }}
+                >
+                  نعم، تسجيل الخروج
+                </button>
+                <button
+                  className="btn"
+                  onClick={() => setShowLogoutConfirm(false)}
+                  style={{
+                    background: THEME.primaryBg,
+                    color: THEME.primary,
+                    padding: 14,
+                    borderRadius: 14,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    border: "none",
+                    width: "100%"
+                  }}
+                >
+                  إلغاء
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1657,39 +1975,84 @@ function ProfilePage({ userInfo }) {
 /* ── BOTTOM NAV ── */
 
 function BottomNav({ page, nav }) {
-  const isHome = !["appointments","profile"].includes(page);
+  const isHome = !["appointments", "profile"].includes(page);
+  const isAppointments = page === "appointments";
+  const isProfile = page === "profile";
+
+  const handleProfileNav = useCallback(() => nav("profile"), [nav]);
+  const handleApptsNav = useCallback(() => nav("appointments"), [nav]);
+  const handleHomeNav = useCallback(() => nav("home"), [nav]);
+
+  const navItemColor = "#A89EC8";
+
   return (
     <div className="bnav">
-      <div className="ni" onClick={()=>nav("profile")}
-        style={{background:page==="profile"?"var(--pbg)":"transparent"}}>
-        {Ico.user(page==="profile"?"var(--p)":"#A89EC8")}
-        <span style={{fontSize:10,fontWeight:700,color:page==="profile"?"var(--p)":"#A89EC8"}}>
+      <div
+        className="ni"
+        onClick={handleProfileNav}
+        style={{
+          background: isProfile ? THEME.primaryBg : "transparent",
+          cursor: "pointer",
+          transition: "background .2s"
+        }}
+      >
+        {Ico.user(isProfile ? THEME.primary : navItemColor)}
+        <span style={{
+          fontSize: 10,
+          fontWeight: 700,
+          color: isProfile ? THEME.primary : navItemColor
+        }}>
           الشخصية
         </span>
       </div>
 
-      <div onClick={()=>nav("appointments")} style={{
-        display:"flex",flexDirection:"column",alignItems:"center",gap:3,
-        cursor:"pointer",
-        background:page==="appointments"?"var(--p)":"var(--pbg)",
-        borderRadius:22,padding:"10px 24px",
-        position:"relative",top:-14,
-        boxShadow:`0 6px 24px rgba(133,105,161,${page==="appointments"?.4:.25})`,
-        transition:"all .2s"
-      }}>
-        {Ico.cal(page==="appointments"?"white":"var(--p)",true)}
-        <span style={{fontSize:10,fontWeight:800,
-          color:page==="appointments"?"white":"var(--p)"}}>مواعيدي</span>
+      <div
+        onClick={handleApptsNav}
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 3,
+          cursor: "pointer",
+          background: isAppointments ? THEME.primary : THEME.primaryBg,
+          borderRadius: 22,
+          padding: "10px 24px",
+          position: "relative",
+          top: -14,
+          boxShadow: `0 6px 24px rgba(133,105,161,${isAppointments ? 0.4 : 0.25})`,
+          transition: "all .2s"
+        }}
+      >
+        {Ico.cal(isAppointments ? "white" : THEME.primary, true)}
+        <span style={{
+          fontSize: 10,
+          fontWeight: 800,
+          color: isAppointments ? "white" : THEME.primary
+        }}>
+          مواعيدي
+        </span>
       </div>
 
-      <div className="ni" onClick={()=>nav("home")}
-        style={{background:isHome&&page!=="appointments"?"var(--pbg)":"transparent"}}>
+      <div
+        className="ni"
+        onClick={handleHomeNav}
+        style={{
+          background: (isHome && !isAppointments) ? THEME.primaryBg : "transparent",
+          cursor: "pointer",
+          transition: "background .2s"
+        }}
+      >
         {Ico.home(
-          isHome&&page!=="appointments"?"var(--p)":"#A89EC8",
-          isHome&&page!=="appointments"
+          (isHome && !isAppointments) ? THEME.primary : navItemColor,
+          (isHome && !isAppointments)
         )}
-        <span style={{fontSize:10,fontWeight:700,
-          color:isHome&&page!=="appointments"?"var(--p)":"#A89EC8"}}>الرئيسية</span>
+        <span style={{
+          fontSize: 10,
+          fontWeight: 700,
+          color: (isHome && !isAppointments) ? THEME.primary : navItemColor
+        }}>
+          الرئيسية
+        </span>
       </div>
     </div>
   );
@@ -1698,51 +2061,92 @@ function BottomNav({ page, nav }) {
 /* ── ROOT APP ── */
 
 function App() {
-  const [page,    setPage]    = useState("home");
-  const [svc,     setSvc]     = useState(null);
-  const [prov,    setProv]    = useState(null);
-  const [bk,      setBk]      = useState(null);
-  const [userInfo,setUserInfo] = useState(null);
+  const [page, setPage] = useState("home");
+  const [svc, setSvc] = useState(null);
+  const [prov, setProv] = useState(null);
+  const [bk, setBk] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
 
-  const nav = p => { setPage(p); window.scrollTo(0,0); };
+  const nav = useCallback(p => {
+    setPage(p);
+    window.scrollTo(0, 0);
+  }, []);
+
+  const handleSvcSelect = useCallback(s => {
+    setSvc(s);
+    nav("providers");
+  }, [nav]);
+
+  const handleProvSelect = useCallback(p => {
+    setProv(p);
+    nav("detail");
+  }, [nav]);
+
+  const handleUserInfo = useCallback(info => {
+    saveClient(info.name, info.phone);
+    setUserInfo(info);
+    nav("booking");
+  }, [nav]);
+
+  const handleBookingConfirm = useCallback((d, t, dur, cost) => {
+    setBk({ p: prov, svc, day: d, time: t, dur, cost, userInfo });
+    nav("confirm");
+  }, [prov, svc, userInfo, nav]);
+
+  const handleBackToHome = useCallback(() => nav("home"), [nav]);
+  const handleBackToProviders = useCallback(() => nav("providers"), [nav]);
+  const handleBackToDetail = useCallback(() => nav("detail"), [nav]);
+  const handleBackToUserinfo = useCallback(() => nav("userinfo"), [nav]);
+  const handleBackToBooking = useCallback(() => nav("booking"), [nav]);
+  const handleToAppointments = useCallback(() => nav("appointments"), [nav]);
 
   return (
     <div>
-      {page==="home" && (
-        <HomePage onSvc={s=>{setSvc(s);nav("providers");}}/>
+      {page === "home" && (
+        <HomePage onSvc={handleSvcSelect} />
       )}
-      {page==="providers" && svc && (
-        <ProvidersPage svc={svc}
-          onProv={p=>{setProv(p);nav("detail");}}
-          onBack={()=>nav("home")}/>
+      {page === "providers" && svc && (
+        <ProvidersPage
+          svc={svc}
+          onProv={handleProvSelect}
+          onBack={handleBackToHome}
+        />
       )}
-      {page==="detail" && prov && (
-        <ProviderDetail p={prov} svc={svc}
-          onBook={()=>nav("userinfo")}
-          onBack={()=>nav("providers")}/>
+      {page === "detail" && prov && (
+        <ProviderDetail
+          p={prov}
+          svc={svc}
+          onBook={() => nav("userinfo")}
+          onBack={handleBackToProviders}
+        />
       )}
-      {page==="userinfo" && prov && (
-        <UserInfoPage prov={prov} svc={svc}
-          onNext={info=>{ saveClient(info.name, info.phone); setUserInfo(info); nav("booking"); }}
-          onBack={()=>nav("detail")}/>
+      {page === "userinfo" && prov && (
+        <UserInfoPage
+          prov={prov}
+          svc={svc}
+          onNext={handleUserInfo}
+          onBack={handleBackToDetail}
+        />
       )}
-      {page==="booking" && prov && (
-        <BookingPage p={prov} svc={svc}
-          onConfirm={(d,t,dur,cost)=>{
-            setBk({p:prov,svc,day:d,time:t,dur,cost,userInfo});
-            nav("confirm");
-          }}
-          onBack={()=>nav("userinfo")}/>
+      {page === "booking" && prov && (
+        <BookingPage
+          p={prov}
+          svc={svc}
+          onConfirm={handleBookingConfirm}
+          onBack={handleBackToUserinfo}
+        />
       )}
-      {page==="confirm" && bk && (
-        <ConfirmPage bk={bk}
-          onConfirm={()=>nav("appointments")}
-          onBack={()=>nav("booking")}/>
+      {page === "confirm" && bk && (
+        <ConfirmPage
+          bk={bk}
+          onConfirm={handleToAppointments}
+          onBack={handleBackToBooking}
+        />
       )}
-      {page==="appointments" && <ApptsPage userInfo={userInfo}/>}
-      {page==="profile"      && <ProfilePage userInfo={userInfo}/>}
+      {page === "appointments" && <ApptsPage userInfo={userInfo} />}
+      {page === "profile" && <ProfilePage userInfo={userInfo} />}
 
-      <BottomNav page={page} nav={nav}/>
+      <BottomNav page={page} nav={nav} />
     </div>
   );
 }
