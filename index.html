@@ -51,23 +51,25 @@
       overflow-x: hidden;
       box-shadow: 0 0 60px rgba(0,0,0,.18);
     }
-    .page { min-height: 100vh; padding-bottom: 88px; }
+    .page { min-height: 100vh; padding-bottom: 88px; animation: fadeUp .25s cubic-bezier(.22,1,.36,1) both; }
     ::-webkit-scrollbar { width: 0; }
 
     @keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
     @keyframes scaleIn { from{opacity:0;transform:scale(.93)} to{opacity:1;transform:scale(1)} }
     @keyframes blink   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.2)} }
     @keyframes spin    { to{transform:rotate(360deg)} }
+    @keyframes slideIn { from{opacity:0;transform:translateX(-18px)} to{opacity:1;transform:translateX(0)} }
     .au  { animation: fadeUp  .38s cubic-bezier(.22,1,.36,1) both }
     .asi { animation: scaleIn .32s cubic-bezier(.22,1,.36,1) both }
+    .asi2{ animation: slideIn .28s cubic-bezier(.22,1,.36,1) both }
 
     .bnav {
       position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
       width: 100%; max-width: 430px; height: 74px;
-      background: white; display: flex; align-items: center; justify-content: space-around;
+      background: rgba(255,255,255,.97); backdrop-filter: blur(12px);
+      display: flex; align-items: center; justify-content: space-around;
       z-index: 999; border-top: 1px solid #E2DCF5;
-      box-shadow: 0 -4px 30px rgba(100,90,165,.10);
-
+      box-shadow: 0 -4px 30px rgba(100,90,165,.12);
     }
     .ni {
       display: flex; flex-direction: column; align-items: center; gap: 3px;
@@ -656,8 +658,25 @@ function HomePage({ onSvc }) {
       </div>
 
 
-      {/* Why us */}
+      {/* Stats row */}
       <div style={{padding:"16px 14px 0"}}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
+          {[
+            {val:"٢+",   lbl:"مختصون معتمدون"},
+            {val:"٧٥+",  lbl:"جلسة منجزة"},
+            {val:"٤.٩",  lbl:"متوسط التقييم"}
+          ].map((s,i)=>(
+            <div key={i} style={{background:"white",borderRadius:18,padding:"14px 8px",
+              textAlign:"center",boxShadow:"0 2px 12px rgba(100,90,165,.07)"}}>
+              <div style={{fontSize:20,fontWeight:900,color:"var(--p)",lineHeight:1.2}}>{s.val}</div>
+              <div style={{fontSize:10,color:"var(--txts)",marginTop:4,lineHeight:1.4}}>{s.lbl}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Why us */}
+      <div style={{padding:"12px 14px 0"}}>
         <div style={{background:"white",borderRadius:22,padding:20,
           boxShadow:"0 2px 14px rgba(100,90,165,.07)"}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
@@ -668,7 +687,7 @@ function HomePage({ onSvc }) {
             <h3 style={{fontSize:15,fontWeight:800,color:"var(--txt)"}}>لماذا انطاق و إدراك؟</h3>
           </div>
           {["مختصون معتمدون ومرخصون رسمياً",
-            "جلسات صوتية مريحة من منزلك",
+            "جلسات عن بعد مريحة من منزلك",
             "أسعار شفافة ومناسبة لجميع الأسر",
             "دعم متواصل بعد كل جلسة"
           ].map((it,i)=>(
@@ -694,8 +713,8 @@ function ProvidersPage({ svc, onProv, onBack }) {
           width:56,height:56,borderRadius:16,
           background:"rgba(255,255,255,.18)",border:"1px solid rgba(255,255,255,.3)",
           display:"flex",alignItems:"center",justifyContent:"center",
-          fontSize:28,marginBottom:12,backdropFilter:"blur(4px)"
-        }}>{svc.emoji}</div>
+          marginBottom:12,backdropFilter:"blur(4px)"
+        }}>{Ico[svc.icon]("rgba(255,255,255,.9)", 28)}</div>
         <h1 style={{fontSize:22,fontWeight:900,marginBottom:5}}>{svc.title}</h1>
         <p style={{fontSize:12,opacity:.88,lineHeight:1.7,maxWidth:280,marginBottom:10}}>
           {svc.desc}
@@ -873,11 +892,12 @@ function UserInfoPage({ prov, svc, onNext, onBack }) {
 
   const next = () => {
     if(!name.trim())        { setErr("يرجى إدخال اسمك الكامل"); return; }
-    if(phone.replace(/\D/g,"").length < 9) {
-      setErr("يرجى إدخال رقم جوال صحيح"); return;
+    const cleanPhone = phone.replace(/\s/g,"");
+    if(!/^05\d{8}$/.test(cleanPhone)) {
+      setErr("رقم الجوال يجب أن يبدأ بـ 05 ومكون من 10 أرقام"); return;
     }
     setErr("");
-    onNext({ name: name.trim(), phone: phone.trim() });
+    onNext({ name: name.trim(), phone: cleanPhone });
   };
 
   return (
@@ -985,7 +1005,8 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
   const [time, setTime] = useState(null);
   const [dur,  setDur]  = useState(null);
 
-  const TODAY=6, YR=2026, MO=5;
+  const _now = new Date();
+  const TODAY=_now.getDate(), YR=_now.getFullYear(), MO=_now.getMonth();
   const dim = new Date(YR,MO+1,0).getDate();
   const fd  = new Date(YR,MO,1).getDay();
   const DAYS = ["أح","إث","ثل","أر","خم","جم","سب"];
@@ -1180,7 +1201,8 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
 
   const send = () => {
     const AR_DAYS = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
-    const dayName = AR_DAYS[new Date(2026, 5, day).getDay()];
+    const _d = new Date();
+    const dayName = AR_DAYS[new Date(_d.getFullYear(), _d.getMonth(), day).getDay()];
     const msg =
       `مرحباً، أود تأكيد حجزي في منصة انطاق و إدراك 🌿\n\n` +
       `👤 *بيانات العميل:*\n` +
@@ -1192,7 +1214,7 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
       `• التخصص: ${p.spec}\n\n` +
       `📅 *موعد الجلسة:*\n` +
       `─────────────────\n` +
-      `• اليوم: ${dayName}، ${day} ${MONTHS[5]} 2026\n` +
+      `• اليوم: ${dayName}، ${day} ${MONTHS[_d.getMonth()]} ${_d.getFullYear()}\n` +
       `• الوقت: ${time}\n` +
       `• مدة الجلسة: ${dur.label}\n` +
       `• التكلفة: ${cost} ريال\n` +
@@ -1246,12 +1268,12 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
             <div>
               <h3 style={{fontSize:14,fontWeight:900,color:"var(--txt)"}}>{p.name}</h3>
               <p style={{fontSize:11,color:"var(--txts)",marginTop:2}}>{p.spec}</p>
-              <StarsRow rating={p.rating}/>
+              {p.rating!==null && <StarsRow rating={p.rating}/>}
             </div>
           </div>
           {[
             {lbl:"الخدمة",  val:svc.title},
-            {lbl:"التاريخ", val:`${day} ${MONTHS[5]} 2026`},
+            {lbl:"التاريخ", val:`${day} ${MONTHS[new Date().getMonth()]} ${new Date().getFullYear()}`},
             {lbl:"الوقت",   val:time},
             {lbl:"المدة",   val:dur.label}
           ].map((r,i)=>(
@@ -1658,12 +1680,14 @@ function ProfilePage({ userInfo }) {
 
 function BottomNav({ page, nav }) {
   const isHome = !["appointments","profile"].includes(page);
+  const isAppt = page === "appointments";
+  const isProf = page === "profile";
   return (
     <div className="bnav">
       <div className="ni" onClick={()=>nav("profile")}
-        style={{background:page==="profile"?"var(--pbg)":"transparent"}}>
-        {Ico.user(page==="profile"?"var(--p)":"#A89EC8")}
-        <span style={{fontSize:10,fontWeight:700,color:page==="profile"?"var(--p)":"#A89EC8"}}>
+        style={{background:isProf?"var(--pbg)":"transparent"}}>
+        {Ico.user(isProf?"var(--p)":"#A89EC8")}
+        <span style={{fontSize:10,fontWeight:700,color:isProf?"var(--p)":"#A89EC8"}}>
           الشخصية
         </span>
       </div>
@@ -1671,25 +1695,22 @@ function BottomNav({ page, nav }) {
       <div onClick={()=>nav("appointments")} style={{
         display:"flex",flexDirection:"column",alignItems:"center",gap:3,
         cursor:"pointer",
-        background:page==="appointments"?"var(--p)":"var(--pbg)",
+        background:isAppt?"var(--p)":"var(--pbg)",
         borderRadius:22,padding:"10px 24px",
         position:"relative",top:-14,
-        boxShadow:`0 6px 24px rgba(133,105,161,${page==="appointments"?.4:.25})`,
-        transition:"all .2s"
+        boxShadow:`0 6px 24px rgba(133,105,161,${isAppt?.4:.22})`,
+        transition:"all .22s"
       }}>
-        {Ico.cal(page==="appointments"?"white":"var(--p)",true)}
+        {Ico.cal(isAppt?"white":"var(--p)",true)}
         <span style={{fontSize:10,fontWeight:800,
-          color:page==="appointments"?"white":"var(--p)"}}>مواعيدي</span>
+          color:isAppt?"white":"var(--p)"}}>مواعيدي</span>
       </div>
 
       <div className="ni" onClick={()=>nav("home")}
-        style={{background:isHome&&page!=="appointments"?"var(--pbg)":"transparent"}}>
-        {Ico.home(
-          isHome&&page!=="appointments"?"var(--p)":"#A89EC8",
-          isHome&&page!=="appointments"
-        )}
+        style={{background:isHome?"var(--pbg)":"transparent"}}>
+        {Ico.home(isHome?"var(--p)":"#A89EC8", isHome)}
         <span style={{fontSize:10,fontWeight:700,
-          color:isHome&&page!=="appointments"?"var(--p)":"#A89EC8"}}>الرئيسية</span>
+          color:isHome?"var(--p)":"#A89EC8"}}>الرئيسية</span>
       </div>
     </div>
   );
@@ -1704,10 +1725,13 @@ function App() {
   const [bk,      setBk]      = useState(null);
   const [userInfo,setUserInfo] = useState(null);
 
-  const nav = p => { setPage(p); window.scrollTo(0,0); };
+  const nav = p => { setPage(p); window.scrollTo({top:0, behavior:"instant"}); };
+
+  // مفتاح فريد لكل صفحة لضمان إعادة تشغيل الـ animation
+  const pageKey = page;
 
   return (
-    <div>
+    <div key={pageKey}>
       {page==="home" && (
         <HomePage onSvc={s=>{setSvc(s);nav("providers");}}/>
       )}
