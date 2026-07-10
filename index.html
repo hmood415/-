@@ -23,25 +23,24 @@
       -webkit-tap-highlight-color: transparent;
     }
     :root {
-      --p:    #8569A1;
-      --p2:   #A086BE;
-      --p3:   #B7A4D0;
-      --pbg:  #EDE8F8;
-      --pbg2: #F8F5FC;
-      --pur:  #6E60A3; --purbg: #ECEAF8;
+      --p:    #4A2D9C;
+      --p2:   #7B5CC0;
+      --p3:   #A98FD8;
+      --pbg:  #EDE6FA;
+      --pbg2: #F5F0FF;
+      --pur:  #4A2D9C; --purbg: #EDE6FA;
       --blu:  #3F7BAA; --blubg: #E3EFF8;
       --grn:  #4E9244; --grnbg: #E5F2E3;
-      --bg:   #F5F3FC;
-      --txt:  #2A1A35;
-      --txts: #7A6488;
-      --brd:  #D3CDEF;
+      --bg:   #F7F4FF;
+      --txt:  #1A0F2E;
+      --txts: #6B5A8A;
+      --brd:  #D8D0EF;
       --star: #F0A500;
-      --shd:  0 2px 16px rgba(100,90,165,.10);
-
+      --shd:  0 8px 40px rgba(74,45,156,.15), 0 2px 8px rgba(74,45,156,.08);
     }
     body {
       font-family: 'Tajawal', sans-serif;
-      background: linear-gradient(160deg,#D3CDEF,#E2DCF5);
+      background: linear-gradient(160deg,#C8B8E8,#D8D0F0);
       min-height: 100vh;
       display: flex; justify-content: center;
     }
@@ -49,12 +48,12 @@
       width: 100%; max-width: 430px; min-height: 100vh;
       background: var(--bg); position: relative;
       overflow-x: hidden;
-      box-shadow: 0 0 60px rgba(0,0,0,.18);
+      box-shadow: 0 0 80px rgba(74,45,156,.22);
     }
-    .page { min-height: 100vh; padding-bottom: 88px; animation: fadeUp .25s cubic-bezier(.22,1,.36,1) both; }
+    .page { min-height: 100vh; padding-bottom: 96px; animation: fadeUp .28s cubic-bezier(.22,1,.36,1) both; }
     ::-webkit-scrollbar { width: 0; }
 
-    @keyframes fadeUp  { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes fadeUp  { from{opacity:0;transform:translateY(22px)} to{opacity:1;transform:translateY(0)} }
     @keyframes scaleIn { from{opacity:0;transform:scale(.93)} to{opacity:1;transform:scale(1)} }
     @keyframes blink   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(1.2)} }
     @keyframes spin    { to{transform:rotate(360deg)} }
@@ -65,15 +64,16 @@
 
     .bnav {
       position: fixed; bottom: 0; left: 50%; transform: translateX(-50%);
-      width: 100%; max-width: 430px; height: 74px;
-      background: rgba(255,255,255,.97); backdrop-filter: blur(12px);
+      width: 100%; max-width: 430px; height: 82px;
+      background: rgba(255,255,255,.96); backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       display: flex; align-items: center; justify-content: space-around;
-      z-index: 999; border-top: 1px solid #E2DCF5;
-      box-shadow: 0 -4px 30px rgba(100,90,165,.12);
+      z-index: 999; border-top: 1px solid rgba(74,45,156,.10);
+      box-shadow: 0 -6px 40px rgba(74,45,156,.14);
     }
     .ni {
-      display: flex; flex-direction: column; align-items: center; gap: 3px;
-      cursor: pointer; padding: 6px 20px; border-radius: 14px; transition: background .18s;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      cursor: pointer; padding: 8px 22px; border-radius: 16px; transition: background .18s;
     }
     .ni:active { transform: scale(.94); }
 
@@ -83,37 +83,38 @@
 
     .backbtn {
       display: inline-flex; align-items: center; gap: 6px;
-      background: rgba(255,255,255,.18); backdrop-filter: blur(6px);
-      border: 1px solid rgba(255,255,255,.3); border-radius: 12px;
-      color: white; padding: 8px 14px; font-size: 13px; font-weight: 700;
-      cursor: pointer; margin-bottom: 20px; font-family: 'Tajawal',sans-serif;
+      background: rgba(255,255,255,.16); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,.28); border-radius: 14px;
+      color: white; padding: 9px 16px; font-size: 13px; font-weight: 700;
+      cursor: pointer; margin-bottom: 22px; font-family: 'Tajawal',sans-serif;
     }
     .backbtn:active { transform: scale(.96); }
 
     .dur-card {
-      flex: 1; border-radius: 16px; padding: 16px 8px;
+      flex: 1; border-radius: 20px; padding: 18px 8px;
       border: 2px solid var(--brd); background: white;
       text-align: center; cursor: pointer; transition: all .18s;
       position: relative; overflow: hidden;
+      box-shadow: 0 2px 10px rgba(74,45,156,.06);
     }
     .dur-card.on { border-color:var(--p); background:var(--pbg2);
-                   box-shadow:0 4px 16px rgba(133,105,161,.18); }
+                   box-shadow: 0 8px 28px rgba(74,45,156,.18); }
     .dur-card:active { transform: scale(.96); }
 
     /* Input */
     .inp {
-      width: 100%; padding: 14px 16px; border-radius: 14px;
+      width: 100%; padding: 15px 18px; border-radius: 16px;
       border: 2px solid var(--brd); background: white;
       font-family: 'Tajawal',sans-serif; font-size: 15px;
       color: var(--txt); outline: none; transition: border .2s;
     }
-    .inp:focus { border-color: var(--p); box-shadow: 0 0 0 4px rgba(133,105,161,.12); }
-    .inp::placeholder { color: #B7A8D8; }
+    .inp:focus { border-color: var(--p); box-shadow: 0 0 0 4px rgba(74,45,156,.10); }
+    .inp::placeholder { color: #B0A0D0; }
 
     /* tag pill */
     .tpill {
       display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 9px; border-radius: 20px;
+      padding: 4px 10px; border-radius: 20px;
       font-size: 10px; font-weight: 700;
     }
   </style>
@@ -163,23 +164,23 @@ const SERVICES = [
     id:1, title:"جلسة انطاق", sub:"تحسين النطق والكلام",
     desc:"جلسات متخصصة مع أخصائيي النطق لتطوير مهارات الكلام والنطق الصحيح للأطفال والبالغين",
     icon:"speech",
-    grad:"linear-gradient(145deg,#4A3278,#8569A1,#B7A4D0)",
-    bg:"#EDE8F8", acc:"#8569A1",
+    grad:"linear-gradient(135deg,#1E0E4B,#4A2D9C,#7B5CC0)",
+    bg:"#EDE6FA", acc:"#4A2D9C",
     targets:["صعوبات النطق","التأتأة","تأخر الكلام"]
   },
   {
     id:2, title:"نوع الطعام", sub:"دعم حسي غذائي للتوحد",
     desc:"برامج تساعد أطفال طيف التوحد على تقبل أنواع الطعام المختلفة وتطوير عادات غذائية سليمة",
     icon:"food",
-    grad:"linear-gradient(145deg,#4A3D80,#6E60A3,#9580CC)",
-    bg:"#ECEAF8", acc:"#6E60A3",
+    grad:"linear-gradient(135deg,#1A0E42,#3D2880,#6A4AB8)",
+    bg:"#EAE6F8", acc:"#4A2D9C",
     targets:["طيف التوحد","الحساسية الحسية","انتقائية الطعام"]
   },
   {
     id:3, title:"التواصل الاجتماعي", sub:"مهارات التفاعل للتوحد",
     desc:"تطوير مهارات التواصل والتفاعل الاجتماعي للأطفال ذوي اضطراب طيف التوحد مع الأقران",
     icon:"social",
-    grad:"linear-gradient(145deg,#255880,#3F7BAA,#6AAAD2)",
+    grad:"linear-gradient(135deg,#0E2855,#255880,#3F7BAA)",
     bg:"#E3EFF8", acc:"#3F7BAA",
     targets:["طيف التوحد","صعوبات التواصل","العزلة الاجتماعية"]
   },
@@ -187,7 +188,7 @@ const SERVICES = [
     id:4, title:"المهارات الحياتية", sub:"استقلالية لذوي الاحتياجات",
     desc:"تدريب شامل على مهارات الاستقلالية والحياة اليومية لتمكين الأطفال من الاعتماد على أنفسهم",
     icon:"skills",
-    grad:"linear-gradient(145deg,#2E6626,#4E9244,#74BB69)",
+    grad:"linear-gradient(135deg,#0D2610,#2E6626,#4E9244)",
     bg:"#E5F2E3", acc:"#4E9244",
     targets:["طيف التوحد","الاحتياجات الخاصة","التأهيل الوظيفي"]
   }
@@ -197,7 +198,7 @@ const PROVIDERS = [
   {
     id:1, name:"شوق السالم", spec:"أخصائية نطق وتواصل وتربية خاصة",
     sessions:null, rating:null, cost:240, real:true,
-    av:{bg:"#8569A1",in:"شس"}, services:[1,3,4],
+    av:{bg:"#4A2D9C",in:"شس"}, services:[1,3,4],
     availDays:[1,2], availTimes:["8:00 م","10:00 م"],
     avail:"الاثنين والثلاثاء",
     about:"أخصائية نطق وتواصل معتمدة، متخصصة في دعم أطفال طيف التوحد وصعوبات النطق وتأخر الكلام. تقدم جلسات فردية مخصصة لتطوير مهارات التواصل والمهارات الحياتية."
@@ -260,18 +261,18 @@ const Ico = {
         fill={f?"#F0A500":"#E0D4EC"} stroke={f?"#F0A500":"#D4C4DC"} strokeWidth="1"/>
     </svg>
   ),
-  clock: (c="#7A6488", sz=14) => (
+  clock: (c="#6B5A8A", sz=14) => (
     <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="9" stroke={c} strokeWidth="1.8"/>
       <path d="M12 7v5l3 3" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  chevron: (c="#D4C4DC") => (
+  chevron: (c="#C4B8DC") => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
       <path d="M9 6l-6 6 6 6" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  check: (c="#8569A1") => (
+  check: (c="#4A2D9C") => (
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="10" fill={c+"22"}/>
       <path d="M7 12l4 4 6-7" stroke={c} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
@@ -282,7 +283,7 @@ const Ico = {
       <path d="M19 12H5M12 5l-7 7 7 7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  phone: (c="#8569A1") => (
+  phone: (c="#4A2D9C") => (
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
       <path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C9.6 21 3 14.4 3 6c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1l-2.3 2.2z"
         fill={c+"22"} stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
@@ -300,14 +301,14 @@ const Ico = {
     </svg>
   ),
   /* ── Service icons ── */
-  speech: (c="#8569A1", sz=38) => (
+  speech: (c="#4A2D9C", sz=38) => (
     <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none">
       <rect x="9" y="2" width="6" height="11" rx="3" stroke={c} strokeWidth="1.8"/>
       <path d="M5 11a7 7 0 0014 0" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M12 18v3M9 21h6" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  food: (c="#6E60A3", sz=38) => (
+  food: (c="#4A2D9C", sz=38) => (
     <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none">
       <path d="M8 3v5a3 3 0 006 0V3" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M11 8v13" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
@@ -331,12 +332,12 @@ const Ico = {
     </svg>
   ),
   /* ── Duration icons ── */
-  flash: (c="#8569A1", sz=26) => (
+  flash: (c="#4A2D9C", sz=26) => (
     <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none">
       <path d="M13 2L5 14h7l-1 8 8-12h-7l1-8z" fill={c+"22"} stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
     </svg>
   ),
-  hourglass: (c="#8569A1", sz=26) => (
+  hourglass: (c="#4A2D9C", sz=26) => (
     <svg width={sz} height={sz} viewBox="0 0 24 24" fill="none">
       <path d="M5 2h14M5 22h14" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M8 2v1l4 5 4-5V2" stroke={c} strokeWidth="1.8" strokeLinejoin="round" fill={c+"22"}/>
@@ -344,20 +345,20 @@ const Ico = {
     </svg>
   ),
   /* ── Stats icons ── */
-  specialist: (c="#8569A1") => (
+  specialist: (c="#4A2D9C") => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <circle cx="10" cy="7" r="3.5" stroke={c} strokeWidth="1.8"/>
       <path d="M3 20c0-3.3 3-6 7-6" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
       <path d="M17 12v5M14.5 14.5h5" stroke={c} strokeWidth="2" strokeLinecap="round"/>
     </svg>
   ),
-  sessions: (c="#8569A1") => (
+  sessions: (c="#4A2D9C") => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="9" fill={c+"15"} stroke={c} strokeWidth="1.8"/>
       <path d="M8 12l3 3 5-6" stroke={c} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  coin: (c="#8569A1") => (
+  coin: (c="#4A2D9C") => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="9" fill={c+"15"} stroke={c} strokeWidth="1.8"/>
       <path d="M14.5 9.5C14 8.6 13.2 8 12 8c-1.4 0-2.5 1-2.5 2.2 0 1 .8 1.8 2.5 2.3s2.5 1.3 2.5 2.3c0 1.2-1.1 2.2-2.5 2.2-1.2 0-2-.5-2.5-1.5"
@@ -371,26 +372,26 @@ const Ico = {
     </svg>
   ),
   /* ── Settings icons ── */
-  bell: (c="#8569A1") => (
+  bell: (c="#4A2D9C") => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <path d="M6 10a6 6 0 1112 0v4l2 2H4l2-2v-4z" stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
       <path d="M10 18a2 2 0 004 0" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  globe: (c="#8569A1") => (
+  globe: (c="#4A2D9C") => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="9" stroke={c} strokeWidth="1.8"/>
       <path d="M12 3c-2.5 3-2.5 15 0 18M12 3c2.5 3 2.5 15 0 18" stroke={c} strokeWidth="1.8"/>
       <path d="M3.5 9h17M3.5 15h17" stroke={c} strokeWidth="1.8"/>
     </svg>
   ),
-  shield: (c="#8569A1") => (
+  shield: (c="#4A2D9C") => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <path d="M12 3l8 3v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-3z" stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
       <path d="M9 12l2 2 4-4" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   ),
-  share: (c="#8569A1") => (
+  share: (c="#4A2D9C") => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <circle cx="18" cy="5" r="3" stroke={c} strokeWidth="1.8"/>
       <circle cx="6" cy="12" r="3" stroke={c} strokeWidth="1.8"/>
@@ -398,21 +399,21 @@ const Ico = {
       <path d="M8.6 13.7l6.8 3.6M15.4 6.7L8.6 10.3" stroke={c} strokeWidth="1.8"/>
     </svg>
   ),
-  gear: (c="#8569A1") => (
+  gear: (c="#4A2D9C") => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <circle cx="12" cy="12" r="3" stroke={c} strokeWidth="1.8"/>
       <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z" stroke={c} strokeWidth="1.8"/>
     </svg>
   ),
   /* ── Section header icons ── */
-  clipboard: (c="#8569A1") => (
+  clipboard: (c="#4A2D9C") => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
       <rect x="5" y="4" width="14" height="17" rx="2" stroke={c} strokeWidth="1.8"/>
       <path d="M9 4V3a1 1 0 011-1h4a1 1 0 011 1v1" stroke={c} strokeWidth="1.8"/>
       <path d="M9 10h6M9 14h4" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
     </svg>
   ),
-  stethoscope: (c="#8569A1") => (
+  stethoscope: (c="#4A2D9C") => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
       <path d="M7 3v7a5 5 0 0010 0V3" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
       <circle cx="17" cy="7" r="1.5" stroke={c} strokeWidth="1.5"/>
@@ -421,7 +422,7 @@ const Ico = {
     </svg>
   ),
   /* ── Note box icons ── */
-  device: (c="#8569A1") => (
+  device: (c="#4A2D9C") => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
       <rect x="5" y="2" width="14" height="20" rx="3" stroke={c} strokeWidth="1.8"/>
       <circle cx="12" cy="18" r="1" fill={c}/>
@@ -462,12 +463,12 @@ const Ico = {
   /* ── Misc ── */
   emptyState: () => (
     <svg width="52" height="52" viewBox="0 0 52 52" fill="none">
-      <rect x="8" y="10" width="36" height="34" rx="5" stroke="#D3CDEF" strokeWidth="2"/>
-      <path d="M17 10V7a2 2 0 014 0v3M31 10V7a2 2 0 014 0v3M8 21h36" stroke="#D3CDEF" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M19 33h14M22 38h8" stroke="#D3CDEF" strokeWidth="2" strokeLinecap="round"/>
+      <rect x="8" y="10" width="36" height="34" rx="5" stroke="#C8B8E8" strokeWidth="2"/>
+      <path d="M17 10V7a2 2 0 014 0v3M31 10V7a2 2 0 014 0v3M8 21h36" stroke="#C8B8E8" strokeWidth="2" strokeLinecap="round"/>
+      <path d="M19 33h14M22 38h8" stroke="#C8B8E8" strokeWidth="2" strokeLinecap="round"/>
     </svg>
   ),
-  doctorJoin: (c="#8569A1") => (
+  doctorJoin: (c="#4A2D9C") => (
     <svg width="34" height="34" viewBox="0 0 24 24" fill="none">
       <circle cx="9" cy="7" r="3.5" stroke={c} strokeWidth="1.8"/>
       <path d="M2 21c0-3.5 3-6 7-6" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
@@ -485,6 +486,41 @@ const Ico = {
       <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
     </svg>
   ),
+  /* ── NEW ICONS ── */
+  heart: (c="#4A2D9C") => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M12 21C12 21 3 14.5 3 8.5A4.5 4.5 0 0112 6a4.5 4.5 0 019 2.5C21 14.5 12 21 12 21z"
+        fill={c+"22"} stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
+    </svg>
+  ),
+  warning: (c="#C9A227") => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"
+        fill={c+"22"} stroke={c} strokeWidth="1.8" strokeLinejoin="round"/>
+      <path d="M12 9v4M12 17h.01" stroke={c} strokeWidth="2" strokeLinecap="round"/>
+    </svg>
+  ),
+  logout: (c="#D35454") => (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+      <path d="M16 17l5-5-5-5" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M21 12H9" stroke={c} strokeWidth="1.8" strokeLinecap="round"/>
+    </svg>
+  ),
+  edit: (c="#4A2D9C") => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+      <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"
+        stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"
+        stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  leaf: (c="white") => (
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+      <path d="M17 8C8 10 5.9 16.17 3.82 19.34a1 1 0 01-1.4.3 1 1 0 01-.22-1.4C4 15 6 8 17 5V2l5 5-5 5V8z"
+        fill={c+"33"} stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
 };
 
 /* ── SHARED ── */
@@ -493,10 +529,10 @@ function Avatar({ p, size=60 }) {
   return (
     <div style={{
       width:size,height:size,borderRadius:"50%",
-      background:`linear-gradient(145deg,${p.av.bg},${p.av.bg}BB)`,
+      background:`linear-gradient(135deg,${p.av.bg},${p.av.bg}BB)`,
       display:"flex",alignItems:"center",justifyContent:"center",
       color:"white",fontWeight:900,fontSize:size*.28,flexShrink:0,
-      boxShadow:`0 4px 16px ${p.av.bg}50, 0 0 0 3px ${p.av.bg}20`
+      boxShadow:`0 6px 20px ${p.av.bg}55, 0 0 0 3px ${p.av.bg}22`
     }}>
       {p.av.in}
     </div>
@@ -517,14 +553,14 @@ function StarsRow({ rating }) {
 function PageHdr({ grad, onBack, children }) {
   return (
     <div style={{
-      background:grad||"linear-gradient(145deg,#3D2868,#8569A1,#B7A4D0)",
-      padding:"54px 20px 28px",color:"white",
+      background:grad||"linear-gradient(135deg,#1E0E4B,#4A2D9C,#7B5CC0)",
+      padding:"60px 22px 32px",color:"white",
       position:"relative",overflow:"hidden"
     }}>
-      <div style={{position:"absolute",top:-50,left:-50,width:160,height:160,
-        borderRadius:"50%",background:"rgba(255,255,255,.07)"}}/>
-      <div style={{position:"absolute",bottom:-35,right:-10,width:120,height:120,
-        borderRadius:"50%",background:"rgba(255,255,255,.05)"}}/>
+      <div style={{position:"absolute",top:-60,left:-60,width:180,height:180,
+        borderRadius:"50%",background:"rgba(255,255,255,.06)"}}/>
+      <div style={{position:"absolute",bottom:-40,right:-15,width:140,height:140,
+        borderRadius:"50%",background:"rgba(255,255,255,.04)"}}/>
       <div style={{position:"relative"}}>
         {onBack && <button className="backbtn" onClick={onBack}>{Ico.back()} رجوع</button>}
         {children}
@@ -553,66 +589,67 @@ function HomePage({ onSvc }) {
     <div className="page">
       {/* Header bar */}
       <div style={{
-        background:"linear-gradient(135deg,#3D2868,#8569A1,#B7A4D0)",
-        padding:"38px 22px 20px",
-        display:"flex",alignItems:"center",gap:12
+        background:"linear-gradient(135deg,#1E0E4B,#4A2D9C,#7B5CC0)",
+        padding:"65px 24px 24px",
+        display:"flex",alignItems:"center",gap:14
       }}>
         <div style={{
-          width:40,height:40,borderRadius:12,flexShrink:0,
-          background:"rgba(255,255,255,.18)",
-          border:"1px solid rgba(255,255,255,.3)",
-          display:"flex",alignItems:"center",justifyContent:"center"
+          width:52,height:52,borderRadius:16,flexShrink:0,
+          background:"rgba(255,255,255,.16)",
+          border:"1px solid rgba(255,255,255,.28)",
+          display:"flex",alignItems:"center",justifyContent:"center",
+          boxShadow:"0 4px 16px rgba(0,0,0,.18)"
         }}>
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
             <rect x="9" y="2" width="6" height="11" rx="3" fill="rgba(255,255,255,.9)"/>
             <path d="M5 11a7 7 0 0014 0" stroke="white" strokeWidth="2" strokeLinecap="round"/>
             <path d="M12 18v3M9 21h6" stroke="white" strokeWidth="2" strokeLinecap="round"/>
           </svg>
         </div>
         <div>
-          <h1 style={{fontSize:20,fontWeight:900,color:"white",letterSpacing:"-.2px",lineHeight:1.2}}>
+          <h1 style={{fontSize:22,fontWeight:900,color:"white",letterSpacing:"-.3px",lineHeight:1.2}}>
             انطاق و إدراك
           </h1>
-          <p style={{fontSize:11,color:"rgba(255,255,255,.8)",fontWeight:500,marginTop:2}}>
+          <p style={{fontSize:12,color:"rgba(255,255,255,.78)",fontWeight:500,marginTop:3}}>
             تواصل مع المختصين في التوحد والنطق
           </p>
         </div>
       </div>
 
       {/* Section title */}
-      <div style={{padding:"22px 18px 10px"}}>
-        <h2 style={{fontSize:18,fontWeight:900,color:"var(--txt)",marginBottom:3}}>خدماتنا</h2>
-        <p style={{fontSize:12,color:"var(--txts)"}}>مصممة خصيصاً لأطفال التوحد وصعوبات النطق</p>
+      <div style={{padding:"26px 20px 12px"}}>
+        <h2 style={{fontSize:20,fontWeight:900,color:"var(--txt)",marginBottom:4,letterSpacing:"-.2px"}}>خدماتنا</h2>
+        <p style={{fontSize:12.5,color:"var(--txts)"}}>مصممة خصيصاً لأطفال التوحد وصعوبات النطق</p>
       </div>
 
       {/* Services — vertical list */}
-      <div style={{padding:"0 14px", display:"flex", flexDirection:"column", gap:12}}>
+      <div style={{padding:"0 16px", display:"flex", flexDirection:"column", gap:14}}>
         {SERVICES.map((s,i)=>(
           <div key={s.id} className="au" onClick={()=>onSvc(s)}
             style={{
-              background:"white", borderRadius:22,
-              padding:"18px 16px",
+              background:"white", borderRadius:26,
+              padding:"20px 18px",
               cursor:"pointer",
-              boxShadow:"0 4px 20px rgba(100,90,165,.10)",
-              display:"flex", gap:16, alignItems:"center",
+              boxShadow:"0 8px 40px rgba(74,45,156,.12), 0 2px 8px rgba(74,45,156,.06)",
+              display:"flex", gap:18, alignItems:"center",
               position:"relative", overflow:"hidden",
               animationDelay:`${i*.07}s`,
-              border:"1.5px solid rgba(100,90,165,.06)"
+              border:"1.5px solid rgba(74,45,156,.06)"
             }}>
 
             {/* blob ديكور */}
             <div style={{
-              position:"absolute", bottom:-20, left:-20,
-              width:80, height:80, borderRadius:"50%",
-              background:s.bg, opacity:.5, pointerEvents:"none"
+              position:"absolute", bottom:-24, left:-24,
+              width:90, height:90, borderRadius:"50%",
+              background:s.bg, opacity:.55, pointerEvents:"none"
             }}/>
 
-            {/* الأيقونة */}
+            {/* الأيقونة داخل حاوية دائرية بـ gradient */}
             <div style={{
-              width:68, height:68, borderRadius:20, flexShrink:0,
-              background:"white",
+              width:72, height:72, borderRadius:22, flexShrink:0,
+              background:`linear-gradient(135deg,${s.bg},white)`,
               border:`2px solid ${s.bg}`,
-              boxShadow:`0 4px 16px ${s.acc}30, 0 0 0 3px ${s.bg}`,
+              boxShadow:`0 6px 20px ${s.acc}28, 0 0 0 4px ${s.bg}`,
               display:"flex", alignItems:"center", justifyContent:"center",
               position:"relative"
             }}>
@@ -622,12 +659,12 @@ function HomePage({ onSvc }) {
             {/* النص */}
             <div style={{flex:1, minWidth:0, position:"relative"}}>
               <h3 style={{
-                fontSize:15, fontWeight:900, color:"var(--txt)",
-                marginBottom:4, lineHeight:1.3
+                fontSize:16, fontWeight:900, color:"var(--txt)",
+                marginBottom:5, lineHeight:1.3, letterSpacing:"-.1px"
               }}>{s.title}</h3>
               <p style={{
-                fontSize:12, color:"var(--txts)", lineHeight:1.65,
-                marginBottom:10
+                fontSize:12.5, color:"var(--txts)", lineHeight:1.7,
+                marginBottom:11
               }}>{s.desc}</p>
               {/* pills */}
               <div style={{display:"flex", gap:5, flexWrap:"wrap"}}>
@@ -635,8 +672,8 @@ function HomePage({ onSvc }) {
                   <span key={t} style={{
                     display:"inline-flex", alignItems:"center", gap:3,
                     fontSize:9.5, fontWeight:700, color:s.acc,
-                    background:s.bg, borderRadius:7,
-                    padding:"3px 8px"
+                    background:s.bg, borderRadius:8,
+                    padding:"3px 9px"
                   }}>✦ {t}</span>
                 ))}
               </div>
@@ -644,10 +681,11 @@ function HomePage({ onSvc }) {
 
             {/* سهم */}
             <div style={{
-              width:32, height:32, borderRadius:10, flexShrink:0,
+              width:34, height:34, borderRadius:12, flexShrink:0,
               background:s.bg,
               display:"flex", alignItems:"center", justifyContent:"center",
-              position:"relative"
+              position:"relative",
+              boxShadow:`0 2px 8px ${s.acc}18`
             }}>
               <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
                 <path d="M10 3L5 8l5 5" stroke={s.acc} strokeWidth="2.2" strokeLinecap="round"/>
@@ -659,41 +697,50 @@ function HomePage({ onSvc }) {
 
 
       {/* Stats row */}
-      <div style={{padding:"16px 14px 0"}}>
-        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10}}>
+      <div style={{padding:"20px 16px 0"}}>
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:12}}>
           {[
             {val:"٢+",   lbl:"مختصون معتمدون"},
             {val:"٧٥+",  lbl:"جلسة منجزة"},
             {val:"٤.٩",  lbl:"متوسط التقييم"}
           ].map((s,i)=>(
-            <div key={i} style={{background:"white",borderRadius:18,padding:"14px 8px",
-              textAlign:"center",boxShadow:"0 2px 12px rgba(100,90,165,.07)"}}>
-              <div style={{fontSize:20,fontWeight:900,color:"var(--p)",lineHeight:1.2}}>{s.val}</div>
-              <div style={{fontSize:10,color:"var(--txts)",marginTop:4,lineHeight:1.4}}>{s.lbl}</div>
+            <div key={i} style={{
+              background:"white",borderRadius:22,padding:"18px 8px",
+              textAlign:"center",
+              boxShadow:"0 6px 24px rgba(74,45,156,.09), 0 1px 4px rgba(74,45,156,.05)",
+              border:"1px solid rgba(74,45,156,.06)"
+            }}>
+              <div style={{fontSize:22,fontWeight:900,color:"var(--p)",lineHeight:1.2}}>{s.val}</div>
+              <div style={{fontSize:10.5,color:"var(--txts)",marginTop:5,lineHeight:1.4}}>{s.lbl}</div>
             </div>
           ))}
         </div>
       </div>
 
       {/* Why us */}
-      <div style={{padding:"12px 14px 0"}}>
-        <div style={{background:"white",borderRadius:22,padding:20,
-          boxShadow:"0 2px 14px rgba(100,90,165,.07)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
-            <div style={{width:40,height:40,borderRadius:12,
-              background:"white",border:"1.5px solid var(--pbg)",
-              boxShadow:"0 3px 10px rgba(100,90,165,.13)",
-              display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>💜</div>
-            <h3 style={{fontSize:15,fontWeight:800,color:"var(--txt)"}}>لماذا انطاق و إدراك؟</h3>
+      <div style={{padding:"14px 16px 0"}}>
+        <div style={{
+          background:"white",borderRadius:26,padding:24,
+          boxShadow:"0 8px 40px rgba(74,45,156,.10), 0 2px 8px rgba(74,45,156,.05)",
+          border:"1px solid rgba(74,45,156,.06)"
+        }}>
+          <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:18}}>
+            <div style={{
+              width:44,height:44,borderRadius:14,
+              background:"linear-gradient(135deg,var(--p),var(--p2))",
+              boxShadow:"0 4px 14px rgba(74,45,156,.30)",
+              display:"flex",alignItems:"center",justifyContent:"center"
+            }}>{Ico.heart("white")}</div>
+            <h3 style={{fontSize:16,fontWeight:900,color:"var(--txt)",letterSpacing:"-.1px"}}>لماذا انطاق و إدراك؟</h3>
           </div>
           {["مختصون معتمدون ومرخصون رسمياً",
             "جلسات عن بعد مريحة من منزلك",
             "أسعار شفافة ومناسبة لجميع الأسر",
             "دعم متواصل بعد كل جلسة"
           ].map((it,i)=>(
-            <div key={i} style={{display:"flex",alignItems:"center",gap:10,marginBottom:i<3?10:0}}>
+            <div key={i} style={{display:"flex",alignItems:"center",gap:12,marginBottom:i<3?12:0}}>
               {Ico.check()}
-              <span style={{fontSize:13,color:"var(--txt)"}}>{it}</span>
+              <span style={{fontSize:13.5,color:"var(--txt)",fontWeight:500}}>{it}</span>
             </div>
           ))}
         </div>
@@ -710,59 +757,62 @@ function ProvidersPage({ svc, onProv, onBack }) {
     <div className="page">
       <PageHdr grad={svc.grad} onBack={onBack}>
         <div style={{
-          width:56,height:56,borderRadius:16,
-          background:"rgba(255,255,255,.18)",border:"1px solid rgba(255,255,255,.3)",
+          width:62,height:62,borderRadius:20,
+          background:"rgba(255,255,255,.16)",border:"1px solid rgba(255,255,255,.28)",
           display:"flex",alignItems:"center",justifyContent:"center",
-          marginBottom:12,backdropFilter:"blur(4px)"
-        }}>{Ico[svc.icon]("rgba(255,255,255,.9)", 28)}</div>
-        <h1 style={{fontSize:22,fontWeight:900,marginBottom:5}}>{svc.title}</h1>
-        <p style={{fontSize:12,opacity:.88,lineHeight:1.7,maxWidth:280,marginBottom:10}}>
+          marginBottom:14,backdropFilter:"blur(6px)",
+          boxShadow:"0 4px 16px rgba(0,0,0,.14)"
+        }}>{Ico[svc.icon]("rgba(255,255,255,.92)", 30)}</div>
+        <h1 style={{fontSize:24,fontWeight:900,marginBottom:6,letterSpacing:"-.2px"}}>{svc.title}</h1>
+        <p style={{fontSize:13,opacity:.88,lineHeight:1.75,maxWidth:280,marginBottom:12}}>
           {svc.desc}
         </p>
         <TargetPills targets={svc.targets}
           acc="rgba(255,255,255,.95)" bg="rgba(255,255,255,.18)" />
       </PageHdr>
 
-      <div style={{padding:"18px 14px"}}>
+      <div style={{padding:"20px 16px"}}>
         <div style={{
-          background:"var(--pbg)",borderRadius:12,padding:"8px 14px",
-          display:"inline-flex",alignItems:"center",gap:6,marginBottom:16
+          background:"var(--pbg)",borderRadius:14,padding:"10px 16px",
+          display:"inline-flex",alignItems:"center",gap:8,marginBottom:18,
+          border:"1px solid rgba(74,45,156,.12)"
         }}>
-          <span style={{fontSize:14,fontWeight:900,color:"var(--p)"}}>{list.length}</span>
-          <span style={{fontSize:11,color:"var(--txts)"}}>مختصين متاحين لهذه الخدمة</span>
+          <span style={{fontSize:15,fontWeight:900,color:"var(--p)"}}>{list.length}</span>
+          <span style={{fontSize:12,color:"var(--txts)"}}>مختصين متاحين لهذه الخدمة</span>
         </div>
 
-        <div style={{display:"flex",flexDirection:"column",gap:12}}>
+        <div style={{display:"flex",flexDirection:"column",gap:14}}>
           {list.map((p,i)=>(
             <div key={p.id} className="au" onClick={()=>onProv(p)}
               style={{
-                background:"white",borderRadius:22,padding:16,
-                display:"flex",gap:14,alignItems:"center",
-                boxShadow:"0 2px 14px rgba(100,90,165,.08)",
-                cursor:"pointer",animationDelay:`${i*.08}s`
+                background:"white",borderRadius:26,padding:18,
+                display:"flex",gap:16,alignItems:"center",
+                boxShadow:"0 8px 36px rgba(74,45,156,.10), 0 2px 6px rgba(74,45,156,.06)",
+                cursor:"pointer",animationDelay:`${i*.08}s`,
+                border:"1.5px solid rgba(74,45,156,.06)"
               }}>
-              <Avatar p={p} size={66}/>
+              <Avatar p={p} size={68}/>
               <div style={{flex:1,minWidth:0}}>
                 {!p.real&&(
                   <div style={{display:"inline-flex",alignItems:"center",gap:5,
-                    background:"#F0EDF8",borderRadius:6,padding:"2px 8px",marginBottom:5}}>
+                    background:"#EDE6FA",borderRadius:8,padding:"3px 10px",marginBottom:6}}>
                     <div style={{width:5,height:5,borderRadius:"50%",background:"var(--p3)"}}/>
                     <span style={{fontSize:9,fontWeight:800,color:"var(--p)",letterSpacing:".2px"}}>مختص تجريبي — لأغراض العرض فقط</span>
                   </div>
                 )}
-                <div style={{display:"flex",alignItems:"center",gap:6,marginBottom:3}}>
-                  <h3 style={{fontSize:14,fontWeight:800,color:"var(--txt)"}}>{p.name}</h3>
+                <div style={{display:"flex",alignItems:"center",gap:7,marginBottom:4}}>
+                  <h3 style={{fontSize:15,fontWeight:900,color:"var(--txt)",letterSpacing:"-.1px"}}>{p.name}</h3>
                   {(p.real||p.rating>=4.8)&&(
                     <div style={{display:"flex",alignItems:"center",gap:2,
-                      background:"#FFF8E6",borderRadius:6,padding:"2px 6px"}}>
+                      background:"#FFF8E6",borderRadius:7,padding:"2px 7px"}}>
                       {Ico.badge()}
                       <span style={{fontSize:9,fontWeight:800,color:"#C08000"}}>مميز</span>
                     </div>
                   )}
                 </div>
-                <p style={{fontSize:11,color:"var(--txts)",marginBottom:6}}>{p.spec}</p>
+                <p style={{fontSize:11.5,color:"var(--txts)",marginBottom:7}}>{p.spec}</p>
                 {p.rating!==null&&<StarsRow rating={p.rating}/>}
-                <div style={{display:"flex",alignItems:"center",gap:10,marginTop:7,flexWrap:"wrap"}}>
+                <div style={{display:"flex",alignItems:"center",gap:10,marginTop:8,flexWrap:"wrap"}}>
                   {p.sessions!==null&&(
                     <div style={{display:"flex",alignItems:"center",gap:4}}>
                       {Ico.clock()}<span style={{fontSize:11,color:"var(--txts)"}}>{p.sessions} جلسة</span>
@@ -770,7 +820,7 @@ function ProvidersPage({ svc, onProv, onBack }) {
                   )}
                   <div style={{
                     background:svc.bg,color:svc.acc,
-                    borderRadius:8,padding:"3px 9px",fontSize:11,fontWeight:800
+                    borderRadius:10,padding:"4px 11px",fontSize:11.5,fontWeight:800
                   }}>{p.cost} ر.س/س</div>
                 </div>
               </div>
@@ -789,78 +839,93 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
   return (
     <div className="page">
       <PageHdr grad={svc?.grad} onBack={onBack}>
-        <div style={{display:"flex",gap:16,alignItems:"flex-start"}}>
-          <Avatar p={p} size={80}/>
+        <div style={{display:"flex",gap:18,alignItems:"flex-start"}}>
+          <Avatar p={p} size={84}/>
           <div>
             {!p.real&&(
               <div style={{display:"inline-flex",alignItems:"center",gap:5,
-                background:"rgba(255,255,255,.18)",borderRadius:7,padding:"3px 9px",
-                border:"1px solid rgba(255,255,255,.25)",marginBottom:6}}>
+                background:"rgba(255,255,255,.16)",borderRadius:8,padding:"3px 10px",
+                border:"1px solid rgba(255,255,255,.24)",marginBottom:7}}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:"rgba(255,255,255,.7)"}}/>
                 <span style={{fontSize:9,fontWeight:800,color:"rgba(255,255,255,.9)",letterSpacing:".2px"}}>مختص تجريبي — لأغراض العرض فقط</span>
               </div>
             )}
-            <h1 style={{fontSize:20,fontWeight:900,marginBottom:4}}>{p.name}</h1>
-            <p style={{fontSize:12,opacity:.9,marginBottom:7}}>{p.spec}</p>
+            <h1 style={{fontSize:21,fontWeight:900,marginBottom:5,letterSpacing:"-.2px"}}>{p.name}</h1>
+            <p style={{fontSize:12.5,opacity:.9,marginBottom:8}}>{p.spec}</p>
             {p.rating!==null&&<StarsRow rating={p.rating}/>}
             <div style={{
-              marginTop:8,display:"inline-flex",alignItems:"center",gap:5,
-              background:"rgba(255,255,255,.18)",borderRadius:10,
-              padding:"4px 10px",border:"1px solid rgba(255,255,255,.25)"
+              marginTop:9,display:"inline-flex",alignItems:"center",gap:6,
+              background:"rgba(255,255,255,.16)",borderRadius:12,
+              padding:"5px 12px",border:"1px solid rgba(255,255,255,.24)"
             }}>
               {Ico.clock("rgba(255,255,255,.9)")}
-              <span style={{fontSize:11,fontWeight:700}}>{p.avail}</span>
+              <span style={{fontSize:11.5,fontWeight:700}}>{p.avail}</span>
             </div>
           </div>
         </div>
       </PageHdr>
 
-      <div style={{padding:"18px 14px"}}>
-        <div style={{display:"grid",gridTemplateColumns:`repeat(${p.real?1:3},1fr)`,gap:10,marginBottom:16}}>
+      <div style={{padding:"20px 16px"}}>
+        <div style={{display:"grid",gridTemplateColumns:`repeat(${p.real?1:3},1fr)`,gap:12,marginBottom:18}}>
           {[
             !p.real&&{icon:Ico.sessions("var(--p)"), val:p.sessions,      lbl:"جلسة منجزة"},
             !p.real&&{icon:Ico.starLg(),             val:`${p.rating}/5`, lbl:"التقييم"},
             {icon:Ico.coin("var(--p)"),              val:p.cost,          lbl:"ر.س/ساعة"}
           ].filter(Boolean).map((s,i)=>(
-            <div key={i} style={{background:"white",borderRadius:18,padding:"15px 8px",
-              textAlign:"center",boxShadow:"0 2px 12px rgba(100,90,165,.07)"}}>
-              <div style={{width:42,height:42,borderRadius:13,
-                background:"white",border:"1.5px solid var(--pbg)",
-                boxShadow:"0 3px 10px rgba(100,90,165,.13)",
+            <div key={i} style={{
+              background:"white",borderRadius:22,padding:"18px 8px",
+              textAlign:"center",
+              boxShadow:"0 6px 24px rgba(74,45,156,.09)",
+              border:"1px solid rgba(74,45,156,.06)"
+            }}>
+              <div style={{width:46,height:46,borderRadius:14,
+                background:"linear-gradient(135deg,var(--pbg),white)",
+                border:"1.5px solid var(--pbg)",
+                boxShadow:"0 4px 12px rgba(74,45,156,.12)",
                 display:"flex",alignItems:"center",justifyContent:"center",
-                margin:"0 auto 8px"}}>{s.icon}</div>
-              <div style={{fontSize:16,fontWeight:900,color:"var(--txt)"}}>{s.val}</div>
-              <div style={{fontSize:9,color:"var(--txts)",marginTop:2}}>{s.lbl}</div>
+                margin:"0 auto 10px"}}>{s.icon}</div>
+              <div style={{fontSize:17,fontWeight:900,color:"var(--txt)"}}>{s.val}</div>
+              <div style={{fontSize:9.5,color:"var(--txts)",marginTop:3}}>{s.lbl}</div>
             </div>
           ))}
         </div>
 
-        <div style={{background:"white",borderRadius:20,padding:18,
-          marginBottom:12,boxShadow:"0 2px 12px rgba(100,90,165,.07)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
-            <div style={{width:36,height:36,borderRadius:10,
-              background:"white",border:"1.5px solid var(--pbg)",
-              boxShadow:"0 2px 8px rgba(100,90,165,.12)",
+        <div style={{
+          background:"white",borderRadius:24,padding:20,
+          marginBottom:14,
+          boxShadow:"0 6px 28px rgba(74,45,156,.09)",
+          border:"1px solid rgba(74,45,156,.06)"
+        }}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+            <div style={{width:40,height:40,borderRadius:12,
+              background:"linear-gradient(135deg,var(--pbg),white)",
+              border:"1.5px solid var(--pbg)",
+              boxShadow:"0 3px 10px rgba(74,45,156,.12)",
               display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.clipboard("var(--p)")}</div>
-            <h3 style={{fontSize:14,fontWeight:800,color:"var(--txt)"}}>نبذة عن المختص</h3>
+            <h3 style={{fontSize:14.5,fontWeight:800,color:"var(--txt)"}}>نبذة عن المختص</h3>
           </div>
-          <p style={{fontSize:13,color:"var(--txts)",lineHeight:1.85}}>{p.about}</p>
+          <p style={{fontSize:13.5,color:"var(--txts)",lineHeight:1.9}}>{p.about}</p>
         </div>
 
-        <div style={{background:"white",borderRadius:20,padding:18,
-          marginBottom:18,boxShadow:"0 2px 12px rgba(100,90,165,.07)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:12}}>
-            <div style={{width:36,height:36,borderRadius:10,
-              background:"white",border:"1.5px solid var(--pbg)",
-              boxShadow:"0 2px 8px rgba(100,90,165,.12)",
+        <div style={{
+          background:"white",borderRadius:24,padding:20,
+          marginBottom:20,
+          boxShadow:"0 6px 28px rgba(74,45,156,.09)",
+          border:"1px solid rgba(74,45,156,.06)"
+        }}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+            <div style={{width:40,height:40,borderRadius:12,
+              background:"linear-gradient(135deg,var(--pbg),white)",
+              border:"1.5px solid var(--pbg)",
+              boxShadow:"0 3px 10px rgba(74,45,156,.12)",
               display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.stethoscope("var(--p)")}</div>
-            <h3 style={{fontSize:14,fontWeight:800,color:"var(--txt)"}}>تخصصاته</h3>
+            <h3 style={{fontSize:14.5,fontWeight:800,color:"var(--txt)"}}>تخصصاته</h3>
           </div>
-          <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
             {SERVICES.filter(s=>p.services.includes(s.id)).map(s=>(
               <div key={s.id} style={{background:s.bg,color:s.acc,
-                borderRadius:10,padding:"5px 12px",fontSize:11,fontWeight:700,
-                display:"flex",alignItems:"center",gap:5}}>
+                borderRadius:12,padding:"6px 14px",fontSize:11.5,fontWeight:700,
+                display:"flex",alignItems:"center",gap:6}}>
                 {Ico[s.icon](s.acc, 14)}{s.title}
               </div>
             ))}
@@ -868,13 +933,13 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
         </div>
 
         <button className="btn" onClick={onBook} style={{
-          background:svc?.grad||"linear-gradient(145deg,#8569A1,#B7A4D0)",
-          color:"white",borderRadius:18,padding:18,fontSize:15,fontWeight:800,
-          width:"100%",boxShadow:"0 8px 28px rgba(133,105,161,.32)",
-          display:"flex",alignItems:"center",justifyContent:"center",gap:10
+          background:svc?.grad||"linear-gradient(135deg,#1E0E4B,#4A2D9C,#7B5CC0)",
+          color:"white",borderRadius:22,padding:20,fontSize:16,fontWeight:800,
+          width:"100%",boxShadow:"0 10px 36px rgba(74,45,156,.38)",
+          display:"flex",alignItems:"center",justifyContent:"center",gap:12
         }}>
-          <div style={{width:28,height:28,borderRadius:8,
-            background:"rgba(255,255,255,.2)",display:"flex",
+          <div style={{width:30,height:30,borderRadius:10,
+            background:"rgba(255,255,255,.18)",display:"flex",
             alignItems:"center",justifyContent:"center"}}>{Ico.cal("white")}</div>
           احجز جلسة الآن
         </button>
@@ -903,39 +968,42 @@ function UserInfoPage({ prov, svc, onNext, onBack }) {
   return (
     <div className="page">
       <PageHdr grad={svc?.grad} onBack={onBack}>
-        <h1 style={{fontSize:22,fontWeight:900,marginBottom:5}}>بياناتك الشخصية</h1>
-        <p style={{fontSize:12,opacity:.88,lineHeight:1.7}}>
+        <h1 style={{fontSize:24,fontWeight:900,marginBottom:6,letterSpacing:"-.2px"}}>بياناتك الشخصية</h1>
+        <p style={{fontSize:13,opacity:.88,lineHeight:1.75}}>
           ندخل بياناتك مرة واحدة فقط لتتمكن من إتمام الحجز
         </p>
       </PageHdr>
 
-      <div style={{padding:"24px 16px"}}>
+      <div style={{padding:"26px 18px"}}>
         {/* Provider reminder */}
         <div style={{
-          background:"white",borderRadius:18,padding:14,
-          display:"flex",gap:14,alignItems:"center",
-          marginBottom:24,boxShadow:"0 2px 12px rgba(100,90,165,.07)"
+          background:"white",borderRadius:22,padding:16,
+          display:"flex",gap:16,alignItems:"center",
+          marginBottom:26,
+          boxShadow:"0 8px 32px rgba(74,45,156,.10)",
+          border:"1px solid rgba(74,45,156,.06)"
         }}>
-          <Avatar p={prov} size={50}/>
+          <Avatar p={prov} size={52}/>
           <div>
-            <p style={{fontSize:13,fontWeight:800,color:"var(--txt)"}}>{prov.name}</p>
-            <p style={{fontSize:11,color:"var(--txts)"}}>{prov.spec}</p>
+            <p style={{fontSize:13.5,fontWeight:800,color:"var(--txt)"}}>{prov.name}</p>
+            <p style={{fontSize:11.5,color:"var(--txts)"}}>{prov.spec}</p>
           </div>
           <div style={{
             marginRight:"auto",background:"var(--pbg)",
-            borderRadius:10,padding:"5px 12px",
-            fontSize:11,fontWeight:700,color:"var(--p)"
+            borderRadius:12,padding:"6px 14px",
+            fontSize:11.5,fontWeight:700,color:"var(--p)",
+            border:"1px solid rgba(74,45,156,.10)"
           }}>
             {svc?.title}
           </div>
         </div>
 
         {/* Form */}
-        <div style={{display:"flex",flexDirection:"column",gap:18}}>
+        <div style={{display:"flex",flexDirection:"column",gap:20}}>
           <div>
             <label style={{
-              display:"block",fontSize:13,fontWeight:700,
-              color:"var(--txt)",marginBottom:8
+              display:"block",fontSize:13.5,fontWeight:700,
+              color:"var(--txt)",marginBottom:9
             }}>
               الاسم الكامل *
             </label>
@@ -949,8 +1017,8 @@ function UserInfoPage({ prov, svc, onNext, onBack }) {
 
           <div>
             <label style={{
-              display:"block",fontSize:13,fontWeight:700,
-              color:"var(--txt)",marginBottom:8
+              display:"block",fontSize:13.5,fontWeight:700,
+              color:"var(--txt)",marginBottom:9
             }}>
               رقم الجوال *
             </label>
@@ -962,10 +1030,10 @@ function UserInfoPage({ prov, svc, onNext, onBack }) {
                 type="tel"
                 maxLength={10}
                 onChange={e=>{ setPhone(e.target.value); setErr(""); }}
-                style={{paddingRight:46}}
+                style={{paddingRight:48}}
               />
               <div style={{
-                position:"absolute",right:14,top:"50%",
+                position:"absolute",right:15,top:"50%",
                 transform:"translateY(-50%)"
               }}>
                 {Ico.phone()}
@@ -975,20 +1043,20 @@ function UserInfoPage({ prov, svc, onNext, onBack }) {
 
           {err && (
             <div style={{
-              background:"#FFF0F0",border:"1px solid #FFD5D5",
-              borderRadius:12,padding:"10px 14px",
-              fontSize:12,fontWeight:600,color:"#D35454",
-              display:"flex",alignItems:"center",gap:8
+              background:"#FFF1F1",border:"1.5px solid #FFD5D5",
+              borderRadius:14,padding:"12px 16px",
+              fontSize:12.5,fontWeight:600,color:"#D35454",
+              display:"flex",alignItems:"center",gap:10
             }}>
-              ⚠️ {err}
+              {Ico.warning()} {err}
             </div>
           )}
 
           <button className="btn" onClick={next} style={{
-            background:"linear-gradient(145deg,#8569A1,#B7A4D0)",
-            color:"white",borderRadius:18,padding:18,
-            fontSize:15,fontWeight:800,width:"100%",
-            boxShadow:"0 8px 28px rgba(133,105,161,.28)"
+            background:"linear-gradient(135deg,#1E0E4B,#4A2D9C,#7B5CC0)",
+            color:"white",borderRadius:20,padding:20,
+            fontSize:15.5,fontWeight:800,width:"100%",
+            boxShadow:"0 10px 36px rgba(74,45,156,.34)"
           }}>
             متابعة لاختيار الموعد →
           </button>
@@ -1021,42 +1089,46 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
   return (
     <div className="page">
       <PageHdr grad={svc?.grad} onBack={onBack}>
-        <h1 style={{fontSize:22,fontWeight:900,marginBottom:5}}>اختر موعدك</h1>
-        <p style={{fontSize:12,opacity:.88,marginBottom:14}}>مع {p.name}</p>
+        <h1 style={{fontSize:24,fontWeight:900,marginBottom:6,letterSpacing:"-.2px"}}>اختر موعدك</h1>
+        <p style={{fontSize:13,opacity:.88,marginBottom:16}}>مع {p.name}</p>
         <div style={{display:"flex",gap:5,alignItems:"center"}}>
           {["التاريخ","الوقت","المدة"].map((lbl,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:5}}>
               <div style={{
-                width:20,height:20,borderRadius:"50%",
-                background:step>i+1?"rgba(255,255,255,.9)":step===i+1?"rgba(255,255,255,.35)":"rgba(255,255,255,.15)",
+                width:22,height:22,borderRadius:"50%",
+                background:step>i+1?"rgba(255,255,255,.92)":step===i+1?"rgba(255,255,255,.32)":"rgba(255,255,255,.14)",
                 display:"flex",alignItems:"center",justifyContent:"center",
                 fontSize:9,fontWeight:800,
                 color:step>i+1?"var(--p)":"white"
               }}>
                 {step>i+1?"✓":i+1}
               </div>
-              <span style={{fontSize:10,fontWeight:700,opacity:step>=i+1?1:.5}}>{lbl}</span>
-              {i<2&&<div style={{width:12,height:1,background:"rgba(255,255,255,.3)"}}/>}
+              <span style={{fontSize:10.5,fontWeight:700,opacity:step>=i+1?1:.5}}>{lbl}</span>
+              {i<2&&<div style={{width:14,height:1,background:"rgba(255,255,255,.28)"}}/>}
             </div>
           ))}
         </div>
       </PageHdr>
 
-      <div style={{padding:"18px 14px"}}>
+      <div style={{padding:"20px 16px"}}>
         {/* Calendar */}
-        <div className="asi" style={{background:"white",borderRadius:22,padding:20,
-          marginBottom:16,boxShadow:"0 2px 14px rgba(100,90,165,.08)"}}>
-          <h3 style={{fontSize:14,fontWeight:800,color:"var(--txt)",
-            textAlign:"center",marginBottom:16}}>
+        <div className="asi" style={{
+          background:"white",borderRadius:26,padding:22,
+          marginBottom:18,
+          boxShadow:"0 8px 36px rgba(74,45,156,.10)",
+          border:"1px solid rgba(74,45,156,.06)"
+        }}>
+          <h3 style={{fontSize:14.5,fontWeight:800,color:"var(--txt)",
+            textAlign:"center",marginBottom:18}}>
             {MONTHS[MO]} {YR}
           </h3>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2,marginBottom:6}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2,marginBottom:8}}>
             {DAYS.map(d=>(
-              <div key={d} style={{textAlign:"center",fontSize:10,
+              <div key={d} style={{textAlign:"center",fontSize:10.5,
                 color:"var(--txts)",fontWeight:700,padding:"4px 0"}}>{d}</div>
             ))}
           </div>
-          <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:3}}>
+          <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4}}>
             {grid.map((d,i)=>{
               if(!d) return <div key={`e${i}`}/>;
               const past=d<TODAY, sel=day===d, td=d===TODAY;
@@ -1065,12 +1137,12 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
               return (
                 <div key={d} onClick={()=>{if(!unavail){setDay(d);setTime(null);setDur(null);}}}
                   style={{
-                    textAlign:"center",padding:"9px 0",borderRadius:11,fontSize:12,
+                    textAlign:"center",padding:"10px 0",borderRadius:12,fontSize:12.5,
                     fontWeight:sel?800:500,cursor:unavail?"default":"pointer",
                     background:sel?"var(--p)":td&&!unavail?"var(--pbg)":"transparent",
-                    color:sel?"white":unavail?"#D3CDEF":td?"var(--p)":"var(--txt)",
+                    color:sel?"white":unavail?"#D8D0EF":td?"var(--p)":"var(--txt)",
                     border:td&&!sel&&!unavail?"2px solid var(--p)":"2px solid transparent",
-                    transition:"all .15s",opacity:unavail?.45:1
+                    transition:"all .15s",opacity:unavail?.4:1
                   }}>{d}</div>
               );
             })}
@@ -1079,9 +1151,9 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
 
         {/* Time */}
         {day && (
-          <div className="au" style={{marginBottom:16}}>
-            <h3 style={{fontSize:14,fontWeight:800,color:"var(--txt)",marginBottom:14,
-              display:"flex",alignItems:"center",gap:8}}>
+          <div className="au" style={{marginBottom:18}}>
+            <h3 style={{fontSize:14.5,fontWeight:800,color:"var(--txt)",marginBottom:14,
+              display:"flex",alignItems:"center",gap:9}}>
               {Ico.clock("var(--p)")} اختر الوقت
             </h3>
             {(p.availTimes
@@ -1089,21 +1161,21 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
               : TIMES
             ).map(per=>(
               <div key={per.lbl} style={{marginBottom:14}}>
-                <p style={{fontSize:11,fontWeight:700,color:"var(--txts)",marginBottom:8}}>
+                <p style={{fontSize:11.5,fontWeight:700,color:"var(--txts)",marginBottom:9}}>
                   {per.lbl}
                 </p>
-                <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>
+                <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
                   {per.slots.map(sl=>{
                     const sel=time===sl;
                     return (
                       <button key={sl} onClick={()=>{setTime(sl);setDur(null);}}
                         className="btn" style={{
-                          padding:"9px 15px",borderRadius:12,
+                          padding:"10px 17px",borderRadius:14,
                           border:`2px solid ${sel?"var(--p)":"var(--brd)"}`,
                           background:sel?"var(--p)":"white",
                           color:sel?"white":"var(--txt)",
-                          fontSize:12,fontWeight:700,
-                          boxShadow:sel?"0 4px 12px rgba(133,105,161,.2)":"none"
+                          fontSize:12.5,fontWeight:700,
+                          boxShadow:sel?"0 6px 16px rgba(74,45,156,.22)":"none"
                         }}>{sl}</button>
                     );
                   })}
@@ -1115,15 +1187,15 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
 
         {/* Duration */}
         {day && time && (
-          <div className="au" style={{marginBottom:22}}>
-            <h3 style={{fontSize:14,fontWeight:800,color:"var(--txt)",marginBottom:6,
-              display:"flex",alignItems:"center",gap:8}}>
+          <div className="au" style={{marginBottom:24}}>
+            <h3 style={{fontSize:14.5,fontWeight:800,color:"var(--txt)",marginBottom:7,
+              display:"flex",alignItems:"center",gap:9}}>
               {Ico.clock("var(--p)")} اختر مدة الجلسة
             </h3>
-            <p style={{fontSize:11,color:"var(--txts)",marginBottom:14}}>
+            <p style={{fontSize:11.5,color:"var(--txts)",marginBottom:16}}>
               السعر يحتسب تلقائياً بناءً على المدة
             </p>
-            <div style={{display:"flex",gap:10}}>
+            <div style={{display:"flex",gap:12}}>
               {DURATIONS.map(d=>{
                 const sel=dur?.id===d.id;
                 const c=d.price;
@@ -1132,8 +1204,8 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
                     onClick={()=>setDur(d)}>
                     {sel&&(
                       <div style={{
-                        position:"absolute",top:7,left:7,
-                        width:16,height:16,borderRadius:"50%",
+                        position:"absolute",top:8,left:8,
+                        width:18,height:18,borderRadius:"50%",
                         background:"var(--p)",display:"flex",
                         alignItems:"center",justifyContent:"center"
                       }}>
@@ -1142,19 +1214,19 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
                     )}
                     {!d.surcharge&&(
                       <div style={{
-                        position:"absolute",top:7,right:7,
+                        position:"absolute",top:8,right:8,
                         background:"linear-gradient(135deg,#F0A500,#F5C842)",
-                        borderRadius:7,padding:"3px 7px",
+                        borderRadius:8,padding:"3px 7px",
                         fontSize:8,fontWeight:800,color:"white",
-                        boxShadow:"0 2px 6px rgba(240,165,0,.35)",
+                        boxShadow:"0 2px 8px rgba(240,165,0,.35)",
                         display:"flex",alignItems:"center",gap:3
                       }}>{Ico.bestDeal()} الأوفر</div>
                     )}
-                    <div style={{marginBottom:7}}>{Ico[d.icon](sel?"var(--p)":"var(--txts)", 26)}</div>
-                    <div style={{fontSize:11,fontWeight:800,color:"var(--txt)",marginBottom:6}}>
+                    <div style={{marginBottom:8}}>{Ico[d.icon](sel?"var(--p)":"var(--txts)", 28)}</div>
+                    <div style={{fontSize:11,fontWeight:800,color:"var(--txt)",marginBottom:7}}>
                       {d.label}
                     </div>
-                    <div style={{fontSize:15,fontWeight:900,color:sel?"var(--p)":"var(--txt)"}}>
+                    <div style={{fontSize:16,fontWeight:900,color:sel?"var(--p)":"var(--txt)"}}>
                       {c} <span style={{fontSize:10,fontWeight:700}}>ر.س</span>
                     </div>
                   </div>
@@ -1166,26 +1238,27 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
 
         {ready&&(
           <div className="au" style={{
-            background:"var(--pbg)",borderRadius:16,padding:"12px 16px",
-            marginBottom:16,display:"flex",justifyContent:"space-between",alignItems:"center"
+            background:"var(--pbg)",borderRadius:18,padding:"14px 18px",
+            marginBottom:18,display:"flex",justifyContent:"space-between",alignItems:"center",
+            border:"1px solid rgba(74,45,156,.10)"
           }}>
-            <div style={{fontSize:12,color:"var(--txts)",display:"flex",alignItems:"center",gap:4,flexWrap:"wrap"}}>
+            <div style={{fontSize:12,color:"var(--txts)",display:"flex",alignItems:"center",gap:5,flexWrap:"wrap"}}>
               {Ico.calSm()} {day} {MONTHS[MO]}
               <span style={{opacity:.4}}>·</span>
               {Ico.timeSm()} {time}
               <span style={{opacity:.4}}>·</span>
               {dur.label}
             </div>
-            <div style={{fontSize:14,fontWeight:900,color:"var(--p)"}}>{cost} ر.س</div>
+            <div style={{fontSize:15,fontWeight:900,color:"var(--p)"}}>{cost} ر.س</div>
           </div>
         )}
 
         <button className="btn" onClick={()=>ready&&onConfirm(day,time,dur,cost)}
           disabled={!ready} style={{
-            background:ready?svc?.grad||"linear-gradient(145deg,#8569A1,#B7A4D0)":"var(--brd)",
+            background:ready?svc?.grad||"linear-gradient(135deg,#1E0E4B,#4A2D9C,#7B5CC0)":"var(--brd)",
             color:ready?"white":"var(--txts)",
-            borderRadius:18,padding:17,fontSize:15,fontWeight:800,width:"100%",
-            boxShadow:ready?"0 8px 28px rgba(133,105,161,.28)":"none"
+            borderRadius:22,padding:19,fontSize:15.5,fontWeight:800,width:"100%",
+            boxShadow:ready?"0 10px 36px rgba(74,45,156,.34)":"none"
           }}>
           {!day?"اختر يوماً أولاً":!time?"اختر الوقت":!dur?"اختر مدة الجلسة":"متابعة →"}
         </button>
@@ -1228,46 +1301,53 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
   return (
     <div className="page">
       <PageHdr onBack={onBack}>
-        <h1 style={{fontSize:22,fontWeight:900,marginBottom:5}}>تأكيد الحجز</h1>
-        <p style={{fontSize:12,opacity:.88}}>راجع تفاصيل موعدك قبل التأكيد</p>
+        <h1 style={{fontSize:24,fontWeight:900,marginBottom:6,letterSpacing:"-.2px"}}>تأكيد الحجز</h1>
+        <p style={{fontSize:13,opacity:.88}}>راجع تفاصيل موعدك قبل التأكيد</p>
       </PageHdr>
 
-      <div style={{padding:"18px 14px"}}>
+      <div style={{padding:"20px 16px"}}>
         {/* Client info card */}
         <div className="asi" style={{
-          background:"white",borderRadius:22,padding:18,
-          marginBottom:12,boxShadow:"0 2px 14px rgba(100,90,165,.08)"
+          background:"white",borderRadius:26,padding:20,
+          marginBottom:14,
+          boxShadow:"0 8px 36px rgba(74,45,156,.10)",
+          border:"1px solid rgba(74,45,156,.06)"
         }}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14,
-            paddingBottom:14,borderBottom:"1px solid #E8E5F8"}}>
-            <div style={{width:38,height:38,borderRadius:11,
-              background:"white",border:"1.5px solid var(--pbg)",
-              boxShadow:"0 2px 8px rgba(100,90,165,.12)",
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,
+            paddingBottom:14,borderBottom:"1px solid #EDE6FA"}}>
+            <div style={{width:42,height:42,borderRadius:13,
+              background:"linear-gradient(135deg,var(--pbg),white)",
+              border:"1.5px solid var(--pbg)",
+              boxShadow:"0 3px 10px rgba(74,45,156,.12)",
               display:"flex",alignItems:"center",justifyContent:"center"}}>
               {Ico.user("var(--p)")}
             </div>
-            <h3 style={{fontSize:14,fontWeight:800,color:"var(--txt)"}}>بياناتك</h3>
+            <h3 style={{fontSize:14.5,fontWeight:800,color:"var(--txt)"}}>بياناتك</h3>
           </div>
-          <div style={{display:"flex",justifyContent:"space-between",padding:"0 0 10px",
-            borderBottom:"1px solid #E8E5F8"}}>
-            <span style={{fontSize:12,color:"var(--txts)"}}>الاسم</span>
-            <span style={{fontSize:13,fontWeight:800,color:"var(--txt)"}}>{userInfo.name}</span>
+          <div style={{display:"flex",justifyContent:"space-between",padding:"0 0 12px",
+            borderBottom:"1px solid #EDE6FA"}}>
+            <span style={{fontSize:12.5,color:"var(--txts)"}}>الاسم</span>
+            <span style={{fontSize:13.5,fontWeight:800,color:"var(--txt)"}}>{userInfo.name}</span>
           </div>
-          <div style={{display:"flex",justifyContent:"space-between",paddingTop:10}}>
-            <span style={{fontSize:12,color:"var(--txts)"}}>الجوال</span>
-            <span style={{fontSize:13,fontWeight:800,color:"var(--txt)"}}>{userInfo.phone}</span>
+          <div style={{display:"flex",justifyContent:"space-between",paddingTop:12}}>
+            <span style={{fontSize:12.5,color:"var(--txts)"}}>الجوال</span>
+            <span style={{fontSize:13.5,fontWeight:800,color:"var(--txt)"}}>{userInfo.phone}</span>
           </div>
         </div>
 
         {/* Booking summary */}
-        <div style={{background:"white",borderRadius:22,padding:18,
-          marginBottom:12,boxShadow:"0 2px 14px rgba(100,90,165,.08)"}}>
-          <div style={{display:"flex",gap:14,alignItems:"center",marginBottom:16,
-            paddingBottom:14,borderBottom:"1px solid #E8E5F8"}}>
-            <Avatar p={p} size={54}/>
+        <div style={{
+          background:"white",borderRadius:26,padding:20,
+          marginBottom:14,
+          boxShadow:"0 8px 36px rgba(74,45,156,.10)",
+          border:"1px solid rgba(74,45,156,.06)"
+        }}>
+          <div style={{display:"flex",gap:16,alignItems:"center",marginBottom:18,
+            paddingBottom:14,borderBottom:"1px solid #EDE6FA"}}>
+            <Avatar p={p} size={56}/>
             <div>
-              <h3 style={{fontSize:14,fontWeight:900,color:"var(--txt)"}}>{p.name}</h3>
-              <p style={{fontSize:11,color:"var(--txts)",marginTop:2}}>{p.spec}</p>
+              <h3 style={{fontSize:14.5,fontWeight:900,color:"var(--txt)",letterSpacing:"-.1px"}}>{p.name}</h3>
+              <p style={{fontSize:11.5,color:"var(--txts)",marginTop:3}}>{p.spec}</p>
               {p.rating!==null && <StarsRow rating={p.rating}/>}
             </div>
           </div>
@@ -1279,38 +1359,44 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
           ].map((r,i)=>(
             <div key={i} style={{
               display:"flex",justifyContent:"space-between",alignItems:"center",
-              padding:"11px 0",borderBottom:i<3?"1px solid #E8E5F8":"none"
+              padding:"12px 0",borderBottom:i<3?"1px solid #EDE6FA":"none"
             }}>
-              <span style={{fontSize:12,color:"var(--txts)"}}>{r.lbl}</span>
-              <span style={{fontSize:13,fontWeight:800,color:"var(--txt)"}}>{r.val}</span>
+              <span style={{fontSize:12.5,color:"var(--txts)"}}>{r.lbl}</span>
+              <span style={{fontSize:13.5,fontWeight:800,color:"var(--txt)"}}>{r.val}</span>
             </div>
           ))}
           <div style={{
-            marginTop:14,background:"var(--pbg)",borderRadius:14,
-            padding:"14px 16px",display:"flex",
-            justifyContent:"space-between",alignItems:"center"
+            marginTop:16,background:"linear-gradient(135deg,var(--pbg),var(--pbg2))",
+            borderRadius:16,padding:"16px 18px",display:"flex",
+            justifyContent:"space-between",alignItems:"center",
+            border:"1px solid rgba(74,45,156,.10)"
           }}>
-            <span style={{fontSize:13,fontWeight:700,color:"var(--txts)"}}>💰 إجمالي التكلفة</span>
-            <span style={{fontSize:20,fontWeight:900,color:"var(--p)"}}>
-              {cost} <span style={{fontSize:13}}>ر.س</span>
+            <div style={{display:"flex",alignItems:"center",gap:8}}>
+              {Ico.coin("var(--p)")}
+              <span style={{fontSize:13.5,fontWeight:700,color:"var(--txts)"}}>إجمالي التكلفة</span>
+            </div>
+            <span style={{fontSize:22,fontWeight:900,color:"var(--p)"}}>
+              {cost} <span style={{fontSize:14}}>ر.س</span>
             </span>
           </div>
         </div>
 
-        <div style={{background:"#FFF8E6",border:"1.5px solid #F5D97A",borderRadius:18,
-          padding:16,marginBottom:20}}>
-          <div style={{display:"flex",gap:10,alignItems:"flex-start",marginBottom:10,
-            paddingBottom:10,borderBottom:"1px solid #F5D97A"}}>
-            <div style={{width:32,height:32,borderRadius:8,background:"rgba(240,165,0,.12)",
+        <div style={{
+          background:"#FFF8E8",border:"1.5px solid #F0DFA0",borderRadius:22,
+          padding:18,marginBottom:22
+        }}>
+          <div style={{display:"flex",gap:10,alignItems:"flex-start",marginBottom:12,
+            paddingBottom:12,borderBottom:"1px solid #F0DFA0"}}>
+            <div style={{width:34,height:34,borderRadius:10,background:"rgba(240,165,0,.12)",
               flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.device("#C08000")}</div>
-            <p style={{fontSize:12,color:"#7A5C00",lineHeight:1.8,margin:0}}>
+            <p style={{fontSize:12.5,color:"#7A5C00",lineHeight:1.85,margin:0}}>
               سيفتح واتساب برسالة تحتوي بياناتك وتفاصيل الحجز كاملةً للتنسيق مع فريقنا
             </p>
           </div>
           <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
-            <div style={{width:32,height:32,borderRadius:8,background:"rgba(240,165,0,.12)",
+            <div style={{width:34,height:34,borderRadius:10,background:"rgba(240,165,0,.12)",
               flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.video("#C08000")}</div>
-            <p style={{fontSize:12,color:"#7A5C00",lineHeight:1.8,margin:0}}>
+            <p style={{fontSize:12.5,color:"#7A5C00",lineHeight:1.85,margin:0}}>
               سوف نؤكد موعدك في أقرب لحظة وسيتم إرسال رابط الجلسة عبر <strong>Zoom</strong> — تأكد من تحميل التطبيق مسبقاً
             </p>
           </div>
@@ -1318,10 +1404,10 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
 
         <button className="btn" onClick={send} style={{
           background:"linear-gradient(145deg,#1FA855,#25D366)",
-          color:"white",borderRadius:18,padding:17,fontSize:15,fontWeight:800,
+          color:"white",borderRadius:22,padding:19,fontSize:15.5,fontWeight:800,
           width:"100%",border:"none",cursor:"pointer",
-          boxShadow:"0 8px 28px rgba(37,211,102,.28)",
-          display:"flex",alignItems:"center",justifyContent:"center",gap:10,
+          boxShadow:"0 10px 34px rgba(37,211,102,.32)",
+          display:"flex",alignItems:"center",justifyContent:"center",gap:12,
           fontFamily:"Tajawal,sans-serif"
         }}>
           {Ico.wa()} تأكيد عبر واتساب
@@ -1380,102 +1466,106 @@ function ApptsPage({ userInfo }) {
   return (
     <div className="page">
       <div style={{
-        background:"linear-gradient(145deg,#3D2868,#8569A1,#B7A4D0)",
-        padding:"54px 20px 28px",color:"white",position:"relative",overflow:"hidden"
+        background:"linear-gradient(135deg,#1E0E4B,#4A2D9C,#7B5CC0)",
+        padding:"60px 22px 30px",color:"white",position:"relative",overflow:"hidden"
       }}>
-        <div style={{position:"absolute",top:-50,left:-50,width:160,height:160,
-          borderRadius:"50%",background:"rgba(255,255,255,.07)"}}/>
+        <div style={{position:"absolute",top:-60,left:-60,width:180,height:180,
+          borderRadius:"50%",background:"rgba(255,255,255,.06)"}}/>
         <div style={{
-          width:48,height:48,borderRadius:14,
-          background:"rgba(255,255,255,.22)",
-          backdropFilter:"blur(6px)",
+          width:54,height:54,borderRadius:16,
+          background:"rgba(255,255,255,.18)",
+          backdropFilter:"blur(8px)",
           display:"flex",alignItems:"center",justifyContent:"center",
-          marginBottom:12,border:"1.5px solid rgba(255,255,255,.4)",
-          boxShadow:"0 4px 14px rgba(0,0,0,.10)"
+          marginBottom:14,border:"1.5px solid rgba(255,255,255,.36)",
+          boxShadow:"0 4px 16px rgba(0,0,0,.12)"
         }}>
           {Ico.cal("white",true)}
         </div>
-        <h1 style={{fontSize:24,fontWeight:900,marginBottom:4}}>مواعيدي</h1>
-        <p style={{fontSize:12,opacity:.88}}>جلساتك المجدولة والمنتهية</p>
+        <h1 style={{fontSize:26,fontWeight:900,marginBottom:5,letterSpacing:"-.2px"}}>مواعيدي</h1>
+        <p style={{fontSize:13,opacity:.88}}>جلساتك المجدولة والمنتهية</p>
       </div>
 
-      <div style={{display:"flex",padding:"14px",gap:8,
-        background:"white",borderBottom:"1px solid #E8E5F8"}}>
+      <div style={{display:"flex",padding:"16px",gap:10,
+        background:"white",borderBottom:"1px solid #EDE6FA"}}>
         {[
           {k:"upcoming", lbl:"القادمة", cnt:up.length},
           {k:"completed",lbl:"المنتهية",cnt:done.length}
         ].map(t=>(
           <button key={t.k} onClick={()=>setTab(t.k)} className="btn" style={{
-            flex:1,padding:"10px 4px",borderRadius:14,border:"none",
-            background:tab===t.k?"var(--p)":"#F0EDF8",
+            flex:1,padding:"12px 4px",borderRadius:16,border:"none",
+            background:tab===t.k?"var(--p)":"#F0EAF8",
             color:tab===t.k?"white":"var(--txts)",
-            fontSize:13,fontWeight:700,
-            boxShadow:tab===t.k?"0 4px 14px rgba(133,105,161,.25)":"none",
-            display:"flex",alignItems:"center",justifyContent:"center",gap:7
+            fontSize:13.5,fontWeight:700,
+            boxShadow:tab===t.k?"0 6px 18px rgba(74,45,156,.28)":"none",
+            display:"flex",alignItems:"center",justifyContent:"center",gap:8
           }}>
             {t.lbl}
             <span style={{
-              background:tab===t.k?"rgba(255,255,255,.25)":"var(--pbg)",
+              background:tab===t.k?"rgba(255,255,255,.24)":"var(--pbg)",
               color:tab===t.k?"white":"var(--p)",
-              borderRadius:8,padding:"1px 7px",fontSize:11,fontWeight:800
+              borderRadius:9,padding:"2px 8px",fontSize:11,fontWeight:800
             }}>{t.cnt}</span>
           </button>
         ))}
       </div>
 
-      <div style={{padding:"14px"}}>
+      <div style={{padding:"16px"}}>
         {loading ? (
           <div style={{textAlign:"center",padding:"50px 20px"}}>
             <div style={{
-              width:44,height:44,borderRadius:"50%",
+              width:48,height:48,borderRadius:"50%",
               border:"4px solid var(--pbg)",borderTopColor:"var(--p)",
-              margin:"0 auto 14px",animation:"spin .8s linear infinite"
+              margin:"0 auto 16px",animation:"spin .8s linear infinite"
             }}/>
-            <p style={{color:"var(--txts)",fontSize:13}}>جارٍ تحميل مواعيدك...</p>
+            <p style={{color:"var(--txts)",fontSize:13.5}}>جارٍ تحميل مواعيدك...</p>
           </div>
         ) : list.length===0 ? (
-          <div style={{textAlign:"center",padding:"50px 20px"}}>
-            <div style={{width:70,height:70,borderRadius:20,background:"var(--pbg)",
-              margin:"0 auto 16px",display:"flex",alignItems:"center",
-              justifyContent:"center"}}>{Ico.emptyState()}</div>
-            <p style={{color:"var(--txts)",fontSize:14,fontWeight:600}}>
+          <div style={{textAlign:"center",padding:"56px 20px"}}>
+            <div style={{width:76,height:76,borderRadius:24,background:"var(--pbg)",
+              margin:"0 auto 18px",display:"flex",alignItems:"center",
+              justifyContent:"center",
+              boxShadow:"0 6px 20px rgba(74,45,156,.10)"
+            }}>{Ico.emptyState()}</div>
+            <p style={{color:"var(--txts)",fontSize:14.5,fontWeight:600}}>
               لا توجد حجوزات أو مواعيد
             </p>
           </div>
         ) : (
-          <div style={{display:"flex",flexDirection:"column",gap:12}}>
+          <div style={{display:"flex",flexDirection:"column",gap:14}}>
             {list.map((a,i)=>(
               <div key={a.id} className="au" style={{
-                background:"white",borderRadius:20,padding:16,
-                boxShadow:"0 2px 14px rgba(100,90,165,.07)",
+                background:"white",borderRadius:24,padding:18,
+                boxShadow:"0 6px 28px rgba(74,45,156,.09)",
                 borderRight:`4px solid ${a.status==="upcoming"?"var(--p)":"var(--brd)"}`,
-                animationDelay:`${i*.07}s`
+                animationDelay:`${i*.07}s`,
+                border:`1.5px solid rgba(74,45,156,.06)`,
+                borderRight:`4px solid ${a.status==="upcoming"?"var(--p)":"var(--brd)"}`
               }}>
                 <div style={{display:"flex",justifyContent:"space-between",
-                  alignItems:"flex-start",marginBottom:10}}>
-                  <div style={{display:"flex",alignItems:"center",gap:8}}>
+                  alignItems:"flex-start",marginBottom:12}}>
+                  <div style={{display:"flex",alignItems:"center",gap:10}}>
                     <div style={{
-                      width:38,height:38,borderRadius:11,
-                      background:"white",
-                      border:`1.5px solid ${a.status==="upcoming"?"var(--pbg)":"#EDE8F4"}`,
-                      boxShadow:"0 2px 8px rgba(100,90,165,.10)",
+                      width:42,height:42,borderRadius:13,
+                      background:"linear-gradient(135deg,var(--pbg),white)",
+                      border:`1.5px solid ${a.status==="upcoming"?"var(--pbg)":"#EDE6FA"}`,
+                      boxShadow:"0 3px 10px rgba(74,45,156,.10)",
                       display:"flex",alignItems:"center",justifyContent:"center"
                     }}>{Ico[a.icon]?.("var(--p)", 20)}</div>
                     <div>
-                      <h3 style={{fontSize:14,fontWeight:800,color:"var(--txt)"}}>{a.svc}</h3>
-                      <p style={{fontSize:11,color:"var(--txts)",display:"flex",alignItems:"center",gap:3}}>{Ico.providerSm()} {a.prov}</p>
+                      <h3 style={{fontSize:14.5,fontWeight:800,color:"var(--txt)",letterSpacing:"-.1px"}}>{a.svc}</h3>
+                      <p style={{fontSize:11.5,color:"var(--txts)",display:"flex",alignItems:"center",gap:3}}>{Ico.providerSm()} {a.prov}</p>
                     </div>
                   </div>
                   <span style={{
-                    fontSize:10,padding:"4px 10px",borderRadius:20,fontWeight:800,
-                    background:a.status==="upcoming"?"var(--pbg)":"#F0EDF8",
+                    fontSize:10.5,padding:"5px 12px",borderRadius:20,fontWeight:800,
+                    background:a.status==="upcoming"?"var(--pbg)":"#F0EAF8",
                     color:a.status==="upcoming"?"var(--p)":"var(--txts)"
                   }}>
                     {a.status==="upcoming"?"✦ قادم":"✓ منتهي"}
                   </span>
                 </div>
                 <div style={{display:"flex",gap:7,flexWrap:"wrap",
-                  paddingTop:10,borderTop:"1px solid #E8E5F8"}}>
+                  paddingTop:12,borderTop:"1px solid #EDE6FA"}}>
                   {[
                     {bg:"var(--pbg)",c:"var(--p)",  ic:Ico.calSm("var(--p)"),   t:fmt(a.date)},
                     {bg:"var(--pbg)",c:"var(--p)",  ic:Ico.timeSm("var(--p)"),  t:a.time},
@@ -1484,8 +1574,8 @@ function ApptsPage({ userInfo }) {
                   ].map((ch,j)=>(
                     <span key={j} style={{
                       display:"inline-flex",alignItems:"center",gap:4,
-                      padding:"4px 10px",borderRadius:20,
-                      fontSize:10,fontWeight:700,
+                      padding:"5px 11px",borderRadius:20,
+                      fontSize:10.5,fontWeight:700,
                       background:ch.bg,color:ch.c
                     }}>{ch.ic}{ch.t}</span>
                   ))}
@@ -1513,48 +1603,54 @@ function ProfilePage({ userInfo }) {
   return (
     <div className="page">
       <div style={{
-        background:"linear-gradient(145deg,#3D2868,#8569A1,#B7A4D0)",
-        padding:"54px 20px 36px",color:"white",
+        background:"linear-gradient(135deg,#1E0E4B,#4A2D9C,#7B5CC0)",
+        padding:"60px 22px 40px",color:"white",
         position:"relative",overflow:"hidden"
       }}>
-        <div style={{position:"absolute",top:-50,left:-50,width:160,height:160,
-          borderRadius:"50%",background:"rgba(255,255,255,.07)"}}/>
-        <div style={{display:"flex",gap:16,alignItems:"center"}}>
+        <div style={{position:"absolute",top:-60,left:-60,width:180,height:180,
+          borderRadius:"50%",background:"rgba(255,255,255,.06)"}}/>
+        <div style={{display:"flex",gap:18,alignItems:"center"}}>
           <div style={{
-            width:76,height:76,borderRadius:"50%",
-            background:"rgba(255,255,255,.20)",
-            border:"3px solid rgba(255,255,255,.4)",
-            display:"flex",alignItems:"center",justifyContent:"center"
+            width:84,height:84,borderRadius:"50%",
+            background:"rgba(255,255,255,.18)",
+            border:"3px solid rgba(255,255,255,.38)",
+            display:"flex",alignItems:"center",justifyContent:"center",
+            boxShadow:"0 8px 28px rgba(0,0,0,.20)"
           }}>
             {Ico.user("white")}
           </div>
           <div>
-            <h1 style={{fontSize:20,fontWeight:900,marginBottom:12}}>{name}</h1>
+            <h1 style={{fontSize:22,fontWeight:900,marginBottom:10,letterSpacing:"-.2px"}}>{name}</h1>
             <div style={{
-              display:"inline-flex",alignItems:"center",gap:6,
-              background:"rgba(255,255,255,.16)",borderRadius:10,
-              padding:"4px 12px",border:"1px solid rgba(255,255,255,.25)"
+              display:"inline-flex",alignItems:"center",gap:7,
+              background:"rgba(255,255,255,.14)",borderRadius:12,
+              padding:"5px 14px",border:"1px solid rgba(255,255,255,.24)"
             }}>
               <div style={{width:7,height:7,borderRadius:"50%",background:"#C8B4F0",
                 animation:"blink 1.8s infinite"}}/>
-              <span style={{fontSize:11,fontWeight:700}}>عضو نشط</span>
+              <span style={{fontSize:12,fontWeight:700}}>عضو نشط</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div style={{padding:"18px 14px"}}>
+      <div style={{padding:"20px 16px"}}>
         {/* Personal info */}
-        <div style={{background:"white",borderRadius:22,padding:18,
-          marginBottom:14,boxShadow:"0 2px 14px rgba(100,90,165,.07)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
-            <div style={{width:38,height:38,borderRadius:11,
-              background:"white",border:"1.5px solid var(--pbg)",
-              boxShadow:"0 2px 8px rgba(100,90,165,.12)",
+        <div style={{
+          background:"white",borderRadius:26,padding:20,
+          marginBottom:16,
+          boxShadow:"0 8px 36px rgba(74,45,156,.10)",
+          border:"1px solid rgba(74,45,156,.06)"
+        }}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
+            <div style={{width:42,height:42,borderRadius:13,
+              background:"linear-gradient(135deg,var(--pbg),white)",
+              border:"1.5px solid var(--pbg)",
+              boxShadow:"0 3px 10px rgba(74,45,156,.12)",
               display:"flex",alignItems:"center",justifyContent:"center"}}>
               {Ico.user("var(--p)")}
             </div>
-            <h3 style={{fontSize:14,fontWeight:800,color:"var(--txt)"}}>البيانات الشخصية</h3>
+            <h3 style={{fontSize:14.5,fontWeight:800,color:"var(--txt)"}}>البيانات الشخصية</h3>
           </div>
           {[
             {lbl:"الاسم الكامل",val:name},
@@ -1564,32 +1660,40 @@ function ProfilePage({ userInfo }) {
           ].map((r,i,arr)=>(
             <div key={i} style={{
               display:"flex",justifyContent:"space-between",alignItems:"center",
-              padding:"12px 0",
-              borderBottom:i<arr.length-1?"1px solid #E8E5F8":"none"
+              padding:"13px 0",
+              borderBottom:i<arr.length-1?"1px solid #EDE6FA":"none"
             }}>
-              <span style={{fontSize:12,color:"var(--txts)"}}>{r.lbl}</span>
+              <span style={{fontSize:12.5,color:"var(--txts)"}}>{r.lbl}</span>
               <span style={{
-                fontSize:13,fontWeight:700,
-                color:r.val==="—"?"#B0A8C8":"var(--txt)"
+                fontSize:13.5,fontWeight:700,
+                color:r.val==="—"?"#B0A0C8":"var(--txt)"
               }}>{r.val}</span>
             </div>
           ))}
           <button className="btn" style={{
-            marginTop:14,padding:12,borderRadius:12,width:"100%",
+            marginTop:16,padding:13,borderRadius:14,width:"100%",
             border:"2px solid var(--brd)",background:"transparent",
-            color:"var(--p)",fontSize:13,fontWeight:700
-          }}>✏️ تعديل البيانات</button>
+            color:"var(--p)",fontSize:13.5,fontWeight:700,
+            display:"flex",alignItems:"center",justifyContent:"center",gap:8
+          }}>
+            {Ico.edit()} تعديل البيانات
+          </button>
         </div>
 
         {/* Settings */}
-        <div style={{background:"white",borderRadius:22,padding:18,
-          marginBottom:14,boxShadow:"0 2px 14px rgba(100,90,165,.07)"}}>
-          <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:14}}>
-            <div style={{width:38,height:38,borderRadius:11,
-              background:"white",border:"1.5px solid var(--pbg)",
-              boxShadow:"0 2px 8px rgba(100,90,165,.12)",
+        <div style={{
+          background:"white",borderRadius:26,padding:20,
+          marginBottom:16,
+          boxShadow:"0 8px 36px rgba(74,45,156,.10)",
+          border:"1px solid rgba(74,45,156,.06)"
+        }}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16}}>
+            <div style={{width:42,height:42,borderRadius:13,
+              background:"linear-gradient(135deg,var(--pbg),white)",
+              border:"1.5px solid var(--pbg)",
+              boxShadow:"0 3px 10px rgba(74,45,156,.12)",
               display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.gear("var(--p)")}</div>
-            <h3 style={{fontSize:14,fontWeight:800,color:"var(--txt)"}}>الإعدادات</h3>
+            <h3 style={{fontSize:14.5,fontWeight:800,color:"var(--txt)"}}>الإعدادات</h3>
           </div>
           {[
             {icon:Ico.bell("var(--p)"),   lbl:"الإشعارات",     toggle:true},
@@ -1600,34 +1704,35 @@ function ProfilePage({ userInfo }) {
             <div key={i} onClick={()=>r.toggle&&setNotif(!notif)}
               style={{
                 display:"flex",justifyContent:"space-between",alignItems:"center",
-                padding:"13px 0",
-                borderBottom:i<arr.length-1?"1px solid #E8E5F8":"none",
+                padding:"14px 0",
+                borderBottom:i<arr.length-1?"1px solid #EDE6FA":"none",
                 cursor:"pointer"
               }}>
-              <div style={{display:"flex",alignItems:"center",gap:10}}>
-                <div style={{width:36,height:36,borderRadius:10,
-                  background:"white",border:"1.5px solid var(--pbg)",
-                  boxShadow:"0 2px 8px rgba(100,90,165,.10)",
+              <div style={{display:"flex",alignItems:"center",gap:12}}>
+                <div style={{width:40,height:40,borderRadius:12,
+                  background:"linear-gradient(135deg,var(--pbg),white)",
+                  border:"1.5px solid var(--pbg)",
+                  boxShadow:"0 2px 8px rgba(74,45,156,.10)",
                   display:"flex",alignItems:"center",justifyContent:"center"}}>
                   {r.icon}
                 </div>
-                <span style={{fontSize:13,fontWeight:600,color:"var(--txt)"}}>{r.lbl}</span>
+                <span style={{fontSize:13.5,fontWeight:600,color:"var(--txt)"}}>{r.lbl}</span>
               </div>
               {r.toggle ? (
                 <div style={{
-                  width:46,height:26,borderRadius:13,
+                  width:50,height:28,borderRadius:14,
                   background:notif?"var(--p)":"#C8C0E0",
                   position:"relative",transition:"background .2s",cursor:"pointer"
                 }}>
                   <div style={{
-                    position:"absolute",left:notif?22:2,top:3,
+                    position:"absolute",left:notif?24:2,top:4,
                     width:20,height:20,borderRadius:"50%",background:"white",
-                    boxShadow:"0 2px 5px rgba(0,0,0,.2)",transition:"left .2s"
+                    boxShadow:"0 2px 6px rgba(0,0,0,.2)",transition:"left .2s"
                   }}/>
                 </div>
               ) : (
-                <div style={{display:"flex",alignItems:"center",gap:4}}>
-                  {r.val&&<span style={{fontSize:12,color:"var(--txts)",fontWeight:600}}>{r.val}</span>}
+                <div style={{display:"flex",alignItems:"center",gap:5}}>
+                  {r.val&&<span style={{fontSize:12.5,color:"var(--txts)",fontWeight:600}}>{r.val}</span>}
                   {Ico.chevron()}
                 </div>
               )}
@@ -1637,40 +1742,45 @@ function ProfilePage({ userInfo }) {
 
         {/* Join specialist */}
         <div onClick={joinSpec} style={{
-          background:"linear-gradient(145deg,var(--purbg),var(--pbg))",
-          borderRadius:22,padding:22,cursor:"pointer",
-          border:"2px dashed var(--p3)",textAlign:"center",marginBottom:14
+          background:"linear-gradient(135deg,#F0EAF8,var(--pbg))",
+          borderRadius:26,padding:24,cursor:"pointer",
+          border:"2px dashed var(--p3)",textAlign:"center",marginBottom:16,
+          boxShadow:"0 4px 20px rgba(74,45,156,.08)"
         }}>
           <div style={{
-            width:64,height:64,borderRadius:18,background:"white",
-            border:"2px solid var(--pbg)",
-            margin:"0 auto 14px",display:"flex",alignItems:"center",
+            width:70,height:70,borderRadius:22,
+            background:"linear-gradient(135deg,var(--pbg),white)",
+            border:"2px solid rgba(74,45,156,.10)",
+            margin:"0 auto 16px",display:"flex",alignItems:"center",
             justifyContent:"center",
-            boxShadow:"0 4px 16px rgba(100,90,165,.16)"
+            boxShadow:"0 6px 20px rgba(74,45,156,.16)"
           }}>{Ico.doctorJoin("var(--p)")}</div>
-          <h3 style={{fontSize:15,fontWeight:900,color:"var(--txt)",marginBottom:8,lineHeight:1.6}}>
+          <h3 style={{fontSize:16,fontWeight:900,color:"var(--txt)",marginBottom:10,lineHeight:1.65,letterSpacing:"-.1px"}}>
             هل تريد أن تكون مختصاً<br/>في انطاق و إدراك؟
           </h3>
-          <p style={{fontSize:12,color:"var(--txts)",marginBottom:16,lineHeight:1.8}}>
+          <p style={{fontSize:12.5,color:"var(--txts)",marginBottom:18,lineHeight:1.85}}>
             انضم إلى فريقنا وساعد الأسر التي تحتاج دعمك
           </p>
           <div style={{
-            display:"inline-flex",alignItems:"center",gap:8,
+            display:"inline-flex",alignItems:"center",gap:9,
             background:"linear-gradient(145deg,#1FA855,#25D366)",
-            color:"white",padding:"11px 24px",borderRadius:14,
-            fontSize:13,fontWeight:800,
-            boxShadow:"0 6px 18px rgba(37,211,102,.25)"
+            color:"white",padding:"12px 26px",borderRadius:16,
+            fontSize:13.5,fontWeight:800,
+            boxShadow:"0 7px 22px rgba(37,211,102,.30)"
           }}>
             {Ico.wa()} انقر هنا للانضمام
           </div>
         </div>
 
         <button className="btn" style={{
-          width:"100%",padding:14,borderRadius:16,
+          width:"100%",padding:15,borderRadius:18,
           border:"2px solid #FFD5D5",background:"#FFF5F5",
-          color:"#D35454",fontSize:13,fontWeight:700,
-          fontFamily:"Tajawal,sans-serif"
-        }}>🚪 تسجيل الخروج</button>
+          color:"#D35454",fontSize:13.5,fontWeight:700,
+          fontFamily:"Tajawal,sans-serif",
+          display:"flex",alignItems:"center",justifyContent:"center",gap:9
+        }}>
+          {Ico.logout()} تسجيل الخروج
+        </button>
       </div>
     </div>
   );
@@ -1686,31 +1796,32 @@ function BottomNav({ page, nav }) {
     <div className="bnav">
       <div className="ni" onClick={()=>nav("profile")}
         style={{background:isProf?"var(--pbg)":"transparent"}}>
-        {Ico.user(isProf?"var(--p)":"#A89EC8")}
-        <span style={{fontSize:10,fontWeight:700,color:isProf?"var(--p)":"#A89EC8"}}>
+        {Ico.user(isProf?"var(--p)":"#A090C0")}
+        <span style={{fontSize:10.5,fontWeight:700,color:isProf?"var(--p)":"#A090C0"}}>
           الشخصية
         </span>
       </div>
 
       <div onClick={()=>nav("appointments")} style={{
-        display:"flex",flexDirection:"column",alignItems:"center",gap:3,
+        display:"flex",flexDirection:"column",alignItems:"center",gap:4,
         cursor:"pointer",
         background:isAppt?"var(--p)":"var(--pbg)",
-        borderRadius:22,padding:"10px 24px",
-        position:"relative",top:-14,
-        boxShadow:`0 6px 24px rgba(133,105,161,${isAppt?.4:.22})`,
-        transition:"all .22s"
+        borderRadius:24,padding:"12px 26px",
+        position:"relative",top:-16,
+        boxShadow:`0 8px 30px rgba(74,45,156,${isAppt?.45:.26})`,
+        transition:"all .22s",
+        border:`2px solid ${isAppt?"transparent":"rgba(74,45,156,.12)"}`
       }}>
         {Ico.cal(isAppt?"white":"var(--p)",true)}
-        <span style={{fontSize:10,fontWeight:800,
+        <span style={{fontSize:10.5,fontWeight:800,
           color:isAppt?"white":"var(--p)"}}>مواعيدي</span>
       </div>
 
       <div className="ni" onClick={()=>nav("home")}
         style={{background:isHome?"var(--pbg)":"transparent"}}>
-        {Ico.home(isHome?"var(--p)":"#A89EC8", isHome)}
-        <span style={{fontSize:10,fontWeight:700,
-          color:isHome?"var(--p)":"#A89EC8"}}>الرئيسية</span>
+        {Ico.home(isHome?"var(--p)":"#A090C0", isHome)}
+        <span style={{fontSize:10.5,fontWeight:700,
+          color:isHome?"var(--p)":"#A090C0"}}>الرئيسية</span>
       </div>
     </div>
   );
