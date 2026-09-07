@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>انطاق و إدراك</title>
+  <title>مدرك</title>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-BYSGFNFCMG"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -705,10 +705,10 @@ function HomePage({ onSvc }) {
         </div>
         <div>
           <h1 style={{fontSize:20,fontWeight:900,color:"white",letterSpacing:"-.2px",lineHeight:1.2}}>
-            انطاق و إدراك
+            مدرك
           </h1>
           <p style={{fontSize:11,color:"rgba(255,255,255,.8)",fontWeight:500,marginTop:2}}>
-            تواصل مع المختصين في التوحد والنطق
+            منصة حجز جلسات متخصصة للتوحد والنطق
           </p>
         </div>
       </div>
@@ -801,7 +801,7 @@ function HomePage({ onSvc }) {
               background:"white",border:"1.5px solid var(--pbg)",
               boxShadow:"0 3px 10px rgba(100,90,165,.13)",
               display:"flex",alignItems:"center",justifyContent:"center",fontSize:20}}>💜</div>
-            <h3 style={{fontSize:15,fontWeight:800,color:"var(--txt)"}}>لماذا انطاق و إدراك؟</h3>
+            <h3 style={{fontSize:15,fontWeight:800,color:"var(--txt)"}}>لماذا مدرك؟</h3>
           </div>
           {["مختصون معتمدون ومرخصون رسمياً",
             "جلسات صوتية مريحة من منزلك",
@@ -1398,7 +1398,7 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
     const AR_DAYS = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
     const dayName = AR_DAYS[new Date(2026, 5, day).getDay()];
     const msg =
-      `مرحباً، أود تأكيد حجزي في منصة انطاق و إدراك 🌿\n\n` +
+      `مرحباً، أود تأكيد حجزي في منصة مدرك 🌿\n\n` +
       `👤 *بيانات العميل:*\n` +
       `• الاسم: ${userInfo.name}\n` +
       `• الجوال: ${userInfo.phone}\n\n` +
@@ -1701,7 +1701,7 @@ function ProfilePage({ userInfo }) {
   const phone = userInfo?.phone || "+966 54 237 8596";
 
   const joinSpec = useCallback(() => {
-    openWA("مرحباً، أود تقديم طلب الانضمام كمختص في منصة انطاق و إدراك 🌿\n\nأرجو إعلامي بالخطوات والمتطلبات اللازمة للانضمام. شكراً 🙏");
+    openWA("مرحباً، أود تقديم طلب الانضمام كمختص في منصة مدرك 🌿\n\nأرجو إعلامي بالخطوات والمتطلبات اللازمة للانضمام. شكراً 🙏");
   }, []);
 
   const handleLogout = useCallback(() => {
@@ -1851,7 +1851,7 @@ function ProfilePage({ userInfo }) {
             boxShadow:"0 4px 16px rgba(100,90,165,.16)"
           }}>{Ico.doctorJoin("var(--p)")}</div>
           <h3 style={{fontSize:15,fontWeight:900,color:"var(--txt)",marginBottom:8,lineHeight:1.6}}>
-            هل تريد أن تكون مختصاً<br/>في انطاق و إدراك؟
+            هل تريد أن تكون مختصاً<br/>في مدرك؟
           </h3>
           <p style={{fontSize:12,color:"var(--txts)",marginBottom:16,lineHeight:1.8}}>
             انضم إلى فريقنا وساعد الأسر التي تحتاج دعمك
