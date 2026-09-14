@@ -229,6 +229,34 @@ const DURATIONS = [
 const MONTHS = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 const WA_NUM = "966542378596";
 const openWA = m => window.open(`https://wa.me/${WA_NUM}?text=${encodeURIComponent(m)}`,"_blank");
+const AR_DAYS = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const fmtDate = (d,m,y) => `${AR_DAYS[new Date(y,m,d).getDay()]}، ${d} ${MONTHS[m]} ${y}`;
+
+/* ── رابط تأكيد الحجز (للفريق) ──
+   يُرفق برسالة العميل؛ عند فتحه تظهر رسالة تأكيد جاهزة تُرسل من جوال الفريق إلى جوال العميل */
+const b64e = o => btoa(String.fromCharCode(...new TextEncoder().encode(JSON.stringify(o))))
+  .replace(/\+/g,"-").replace(/\//g,"_").replace(/=+$/,"");
+const b64d = s => JSON.parse(new TextDecoder().decode(
+  Uint8Array.from(atob(s.replace(/-/g,"+").replace(/_/g,"/")), c=>c.charCodeAt(0))));
+
+const confirmLink = (bk, m, y) => `${location.origin}/?c=${b64e({
+  n:bk.userInfo.name, t:bk.userInfo.phone, s:bk.svc.id, p:bk.p.id,
+  d:bk.day, m, y, h:bk.time, u:bk.dur.id, c:bk.cost
+})}`;
+
+// يرجع null إذا لا يوجد رابط تأكيد، و{bad:true} إذا كان الرابط تالفاً
+const CONFIRM_REQ = (() => {
+  const c = new URLSearchParams(location.search).get("c");
+  if (!c) return null;
+  try {
+    const r = b64d(c);
+    const svc = SERVICES.find(s=>s.id===r.s), p = PROVIDERS.find(x=>x.id===r.p);
+    const dur = DURATIONS.find(x=>x.id===r.u);
+    const ok = svc && p && dur && /^05\d{8}$/.test(r.t) && typeof r.n==="string" && r.n.trim()
+      && r.d>=1 && r.d<=31 && r.m>=0 && r.m<=11 && r.y>=2024 && typeof r.h==="string";
+    return ok ? { name:r.n.trim().slice(0,60), phone:r.t, svc, p, dur, day:r.d, month:r.m, year:r.y, time:r.h.slice(0,20), cost:Number(r.c)||dur.price } : { bad:true };
+  } catch { return { bad:true }; }
+})();
 
 /* ── SVG ICONS ── */
 const Ico = {
@@ -1273,9 +1301,7 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
   const { p, svc, day, time, dur, cost, userInfo } = bk;
 
   const send = () => {
-    const AR_DAYS = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
     const _d = new Date();
-    const dayName = AR_DAYS[new Date(_d.getFullYear(), _d.getMonth(), day).getDay()];
     const msg =
       `مرحباً، أود تأكيد حجزي في منصة مدرك 🌿\n\n` +
       `👤 *بيانات العميل:*\n` +
@@ -1287,12 +1313,13 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
       `• التخصص: ${p.spec}\n\n` +
       `📅 *موعد الجلسة:*\n` +
       `─────────────────\n` +
-      `• اليوم: ${dayName}، ${day} ${MONTHS[_d.getMonth()]} ${_d.getFullYear()}\n` +
+      `• اليوم: ${fmtDate(day, _d.getMonth(), _d.getFullYear())}\n` +
       `• الوقت: ${time}\n` +
       `• مدة الجلسة: ${dur.label}\n` +
       `• التكلفة: ${cost} ريال\n` +
       `─────────────────\n\n` +
-      `أرجو التأكيد والتواصل معي. شكراً 🙏`;
+      `أرجو التأكيد والتواصل معي. شكراً 🙏\n\n` +
+      `🔗 رابط تأكيد الحجز (للفريق):\n${confirmLink(bk, _d.getMonth(), _d.getFullYear())}`;
     openWA(msg);
     saveBooking(bk);
     onConfirm();
@@ -1827,6 +1854,90 @@ function BottomNav({ page, nav }) {
   );
 }
 
+/* ── صفحة الفريق: إرسال تأكيد الحجز للعميل ── */
+
+function OwnerConfirmPage({ req }) {
+  if (req.bad) return (
+    <div className="page">
+      <PageHdr>
+        <h1 style={{fontSize:24,fontWeight:900,marginBottom:6}}>رابط غير صالح</h1>
+        <p style={{fontSize:13,opacity:.88}}>تعذّر قراءة بيانات الحجز من هذا الرابط</p>
+      </PageHdr>
+    </div>
+  );
+
+  const { name, phone, svc, p, dur, day, month, year, time, cost } = req;
+  const msg =
+    `مرحباً ${name} 🌿\n\n` +
+    `تم تأكيد حجزك في منصة مدرك ✅\n\n` +
+    `📋 *تفاصيل الجلسة:*\n` +
+    `─────────────────\n` +
+    `• الخدمة: ${svc.title}\n` +
+    `• المختص: ${p.name}\n` +
+    `• اليوم: ${fmtDate(day, month, year)}\n` +
+    `• الوقت: ${time}\n` +
+    `• مدة الجلسة: ${dur.label}\n` +
+    `• التكلفة: ${cost} ريال\n` +
+    `─────────────────\n\n` +
+    `🎥 سيصلك رابط الجلسة عبر Zoom قبل الموعد، يُرجى تحميل التطبيق مسبقاً.\n\n` +
+    `نسعد بخدمتك 💜\nفريق مدرك`;
+  const waLink = `https://wa.me/966${phone.slice(1)}?text=${encodeURIComponent(msg)}`;
+
+  const card = {
+    background:"white",borderRadius:26,padding:20,marginBottom:14,
+    boxShadow:"0 8px 36px rgba(74,45,156,.10)",border:"1px solid rgba(74,45,156,.06)"
+  };
+
+  return (
+    <div className="page" style={{paddingBottom:30}}>
+      <PageHdr>
+        <h1 style={{fontSize:24,fontWeight:900,marginBottom:6,letterSpacing:"-.2px"}}>تأكيد حجز العميل</h1>
+        <p style={{fontSize:13,opacity:.88}}>راجع الرسالة ثم أرسلها للعميل عبر واتساب</p>
+      </PageHdr>
+
+      <div style={{padding:"20px 16px"}}>
+        <div className="asi" style={card}>
+          {[
+            {lbl:"العميل",  val:name},
+            {lbl:"الجوال",  val:phone},
+            {lbl:"الخدمة",  val:svc.title},
+            {lbl:"الموعد",  val:`${fmtDate(day, month, year)} — ${time}`}
+          ].map((r,i)=>(
+            <div key={i} style={{
+              display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,
+              padding:"12px 0",borderBottom:i<3?"1px solid #EDE6FA":"none"
+            }}>
+              <span style={{fontSize:12.5,color:"var(--txts)",flexShrink:0}}>{r.lbl}</span>
+              <span style={{fontSize:13.5,fontWeight:800,color:"var(--txt)",textAlign:"left"}}>{r.val}</span>
+            </div>
+          ))}
+        </div>
+
+        <div style={card}>
+          <h3 style={{fontSize:14.5,fontWeight:800,color:"var(--txt)",marginBottom:12}}>الرسالة الجاهزة</h3>
+          <div style={{
+            background:"#E7F8EE",border:"1px solid #BFE9CF",borderRadius:16,
+            padding:"14px 16px",fontSize:13,lineHeight:1.9,color:"#1F3B2A",whiteSpace:"pre-wrap"
+          }}>{msg}</div>
+        </div>
+
+        <a className="btn" href={waLink} style={{
+          background:"linear-gradient(145deg,#1FA855,#25D366)",
+          color:"white",borderRadius:22,padding:19,fontSize:15.5,fontWeight:800,
+          width:"100%",textDecoration:"none",boxSizing:"border-box",
+          boxShadow:"0 10px 34px rgba(37,211,102,.32)",
+          display:"flex",alignItems:"center",justifyContent:"center",gap:12
+        }}>
+          {Ico.wa()} إرسال التأكيد للعميل
+        </a>
+        <p style={{fontSize:12,color:"var(--txts)",textAlign:"center",marginTop:12,lineHeight:1.8}}>
+          سيفتح واتساب على محادثة العميل والرسالة مكتوبة — اضغط إرسال
+        </p>
+      </div>
+    </div>
+  );
+}
+
 /* ── ROOT APP ── */
 
 function App() {
@@ -1882,7 +1993,8 @@ function App() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById("app")).render(<App/>);
+ReactDOM.createRoot(document.getElementById("app"))
+  .render(CONFIRM_REQ ? <OwnerConfirmPage req={CONFIRM_REQ}/> : <App/>);
 </script>
 </body>
 </html>
