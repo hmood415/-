@@ -182,7 +182,7 @@ const SERVICES = [
     icon:"speech",
     grad:"#23302C",
     bg:"#F3F5F3", acc:"#23302C",
-    targets:["صعوبات النطق","التأتأة","تأخر الكلام"]
+    targets:["التأتأة","تأخر النطق","مشاكل نطق الأحرف"]
   },
   {
     id:2, title:"نوع الطعام", sub:"دعم حسي غذائي للتوحد",
@@ -213,15 +213,18 @@ const SERVICES = [
 const PROVIDERS = [
   {
     id:1, name:"شوق السالم", spec:"أخصائية نطق وتواصل وتربية خاصة",
-    sessions:null, rating:null, cost:240, real:true,
+    sessions:null, rating:null, cost:90, real:true,
     av:{bg:"#23302C",in:"شس"}, services:[1,3,4],
-    availDays:[1,2], availTimes:["8:00 م","10:00 م"],
-    avail:"الاثنين والثلاثاء",
+    availDays:[0,1,2,3,4,6],
+    availSlots:{ 0:["11:40 ص","4:00 م"], 1:["11:40 ص","4:00 م"], 2:["11:40 ص","4:00 م"],
+                 3:["11:40 ص","4:00 م"], 4:["11:40 ص","4:00 م"],
+                 6:["2:00 م","3:00 م","4:00 م","5:00 م","6:00 م","7:00 م","8:00 م","9:00 م"] },
+    avail:"الأحد – الخميس والسبت",
     about:"أخصائية نطق وتواصل معتمدة، متخصصة في دعم أطفال طيف التوحد وصعوبات النطق وتأخر الكلام. تقدم جلسات فردية مخصصة لتطوير مهارات التواصل والمهارات الحياتية."
   },
   {
     id:2, name:"اختبار", spec:"مختص تجريبي",
-    sessions:120, rating:4.7, cost:170, real:false,
+    sessions:120, rating:4.7, cost:90, real:false,
     av:{bg:"#23302C",in:"اخ"}, services:[1,2,3,4],
     avail:"السبت – الأربعاء",
     about:"هذا حساب تجريبي لأغراض اختبار المنصة فقط. لا يُقدّم جلسات حقيقية."
@@ -236,11 +239,13 @@ const TIMES = [
   {lbl:"مساءً",  slots:["5:00 م","6:00 م","7:00 م","8:00 م"]}
 ];
 
-const DURATIONS = [
-  {id:"20", label:"٢٠ دقيقة", icon:"flash",     price: 75,  surcharge:true},
-  {id:"45", label:"٤٥ دقيقة", icon:"hourglass", price: 152, surcharge:true},
-  {id:"60", label:"ساعة كاملة", icon:"clock",   price: 180, surcharge:false}
+const SESSION_TYPES = [
+  {id:"eval",     label:"جلسة تقييم",  price:115, icon:"hourglass",
+   note:"تقييم أولي لتحديد الاحتياج ووضع خطة الجلسات"},
+  {id:"practice", label:"جلسة ممارسة", price: 90, icon:"clock",
+   note:"جلسة تدريب وتمارين على مهارات النطق"}
 ];
+const SESSION_DURATION = "٣٠ دقيقة";
 
 const MONTHS = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 const WA_NUM = "966542378596";
@@ -771,7 +776,7 @@ function ProvidersPage({ svc, onProv, onBack }) {
                   <div style={{
                     background:svc.bg,color:svc.acc,
                     borderRadius:16,padding:"4px 11px",fontSize:11.5,fontWeight:600
-                  }}>{p.cost} ر.س/س</div>
+                  }}>تبدأ من {p.cost} ر.س</div>
                 </div>
               </div>
               {Ico.chevron()}
@@ -820,7 +825,7 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
           {[
             !p.real&&{icon:Ico.sessions("var(--p)"), val:p.sessions,      lbl:"جلسة منجزة"},
             !p.real&&{icon:Ico.starLg(),             val:`${p.rating}/5`, lbl:"التقييم"},
-            {icon:Ico.coin("var(--p)"),              val:p.cost,          lbl:"ر.س/ساعة"}
+            {icon:Ico.coin("var(--p)"),              val:p.cost,          lbl:"ر.س تبدأ من · جلسة ٣٠ دقيقة"}
           ].filter(Boolean).map((s,i)=>(
             <div key={i} style={{
               background:"white",borderRadius:16,padding:"18px 8px",
@@ -1019,9 +1024,9 @@ function UserInfoPage({ prov, svc, onNext, onBack }) {
 /* ── BOOKING PAGE ── */
 
 function BookingPage({ p, svc, onConfirm, onBack }) {
+  const [type, setType] = useState(null);
   const [day,  setDay]  = useState(null);
   const [time, setTime] = useState(null);
-  const [dur,  setDur]  = useState(null);
 
   const _now = new Date();
   const TODAY=_now.getDate(), YR=_now.getFullYear(), MO=_now.getMonth();
@@ -1032,17 +1037,25 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
   for(let i=0;i<fd;i++) grid.push(null);
   for(let d=1;d<=dim;d++) grid.push(d);
 
-  const cost  = dur ? dur.price : null;
-  const ready = day && time && dur;
-  const step  = !day ? 1 : !time ? 2 : !dur ? 3 : 4;
+  const dowOf = d => new Date(YR,MO,d).getDay();
+  const slotsFor = d => {
+    if(!d) return [];
+    if(p.availSlots) return p.availSlots[dowOf(d)] || [];
+    if(p.availTimes) return p.availTimes;
+    return TIMES.flatMap(t=>t.slots);
+  };
+
+  const cost  = type ? type.price : null;
+  const ready = type && day && time;
+  const step  = !type ? 1 : !day ? 2 : !time ? 3 : 4;
 
   return (
     <div className="page">
       <PageHdr grad={svc?.grad} onBack={onBack}>
-        <h1 style={{fontSize:19,fontWeight:700,marginBottom:3,letterSpacing:"-.2px"}}>اختر موعدك</h1>
+        <h1 style={{fontSize:19,fontWeight:700,marginBottom:3,letterSpacing:"-.2px"}}>احجز جلستك</h1>
         <p style={{fontSize:12,opacity:.82,marginBottom:12}}>مع {p.name}</p>
         <div style={{display:"flex",gap:5,alignItems:"center"}}>
-          {["التاريخ","الوقت","المدة"].map((lbl,i)=>(
+          {["نوع الجلسة","التاريخ","الوقت"].map((lbl,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:5}}>
               <div style={{
                 width:22,height:22,borderRadius:"50%",
@@ -1061,8 +1074,50 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
       </PageHdr>
 
       <div style={{padding:"20px 16px"}}>
-        {/* Calendar */}
-        <div className="asi" style={{
+
+        {/* نوع الجلسة */}
+        <div className="asi" style={{marginBottom:18}}>
+          <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)",marginBottom:7,
+            display:"flex",alignItems:"center",gap:9}}>
+            {Ico.clock("var(--p)")} نوع الجلسة
+          </h3>
+          <p style={{fontSize:11.5,color:"var(--txts)",marginBottom:14}}>
+            مدة الجلسة {SESSION_DURATION} لكلا النوعين
+          </p>
+          <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            {SESSION_TYPES.map(t=>{
+              const sel=type?.id===t.id;
+              return (
+                <div key={t.id} onClick={()=>{setType(t);setTime(null);}}
+                  style={{
+                    display:"flex",alignItems:"center",gap:14,
+                    background:sel?"#F0F7F4":"white",
+                    border:`1px solid ${sel?"var(--acc)":"var(--line)"}`,
+                    borderRadius:16,padding:"15px 16px",cursor:"pointer",
+                    transition:"border-color .15s, background .15s"
+                  }}>
+                  <div style={{
+                    width:40,height:40,borderRadius:12,flexShrink:0,
+                    background:sel?"white":"var(--sand)",
+                    display:"flex",alignItems:"center",justifyContent:"center"
+                  }}>{Ico[t.icon](sel?"var(--acc)":"var(--txts)", 22)}</div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontSize:14,fontWeight:600,color:"var(--txt)",marginBottom:3}}>{t.label}</div>
+                    <div style={{fontSize:11.5,color:"var(--txts)",lineHeight:1.6}}>{t.note}</div>
+                  </div>
+                  <div style={{textAlign:"center",flexShrink:0}}>
+                    <div style={{fontSize:16,fontWeight:700,color:sel?"var(--acc)":"var(--txt)"}}>{t.price}</div>
+                    <div style={{fontSize:10,color:"var(--txts)",marginTop:2}}>ر.س</div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* التقويم */}
+        {type && (
+        <div className="au" style={{
           background:"white",borderRadius:16,padding:22,
           marginBottom:18,
           boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
@@ -1082,10 +1137,9 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
             {grid.map((d,i)=>{
               if(!d) return <div key={`e${i}`}/>;
               const past=d<TODAY, sel=day===d, td=d===TODAY;
-              const dow=new Date(YR,MO,d).getDay();
-              const unavail=past||(p.availDays&&!p.availDays.includes(dow));
+              const unavail=past||slotsFor(d).length===0;
               return (
-                <div key={d} onClick={()=>{if(!unavail){setDay(d);setTime(null);setDur(null);}}}
+                <div key={d} onClick={()=>{if(!unavail){setDay(d);setTime(null);}}}
                   style={{
                     textAlign:"center",padding:"10px 0",borderRadius:16,fontSize:12.5,
                     fontWeight:sel?800:500,cursor:unavail?"default":"pointer",
@@ -1098,88 +1152,30 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
             })}
           </div>
         </div>
+        )}
 
-        {/* Time */}
-        {day && (
+        {/* الوقت */}
+        {type && day && (
           <div className="au" style={{marginBottom:18}}>
             <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)",marginBottom:14,
               display:"flex",alignItems:"center",gap:9}}>
               {Ico.clock("var(--p)")} اختر الوقت
             </h3>
-            {(p.availTimes
-              ? [{lbl:"المواعيد المتاحة", slots:p.availTimes}]
-              : TIMES
-            ).map(per=>(
-              <div key={per.lbl} style={{marginBottom:14}}>
-                <p style={{fontSize:11.5,fontWeight:700,color:"var(--txts)",marginBottom:9}}>
-                  {per.lbl}
-                </p>
-                <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                  {per.slots.map(sl=>{
-                    const sel=time===sl;
-                    return (
-                      <button key={sl} onClick={()=>{setTime(sl);setDur(null);}}
-                        className="btn" style={{
-                          padding:"10px 17px",borderRadius:16,
-                          border:`2px solid ${sel?"var(--p)":"var(--brd)"}`,
-                          background:sel?"var(--p)":"white",
-                          color:sel?"white":"var(--txt)",
-                          fontSize:12.5,fontWeight:700,
-                          boxShadow:sel?"0 6px 16px var(--line)":"none"
-                        }}>{sl}</button>
-                    );
-                  })}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Duration */}
-        {day && time && (
-          <div className="au" style={{marginBottom:24}}>
-            <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)",marginBottom:7,
-              display:"flex",alignItems:"center",gap:9}}>
-              {Ico.clock("var(--p)")} اختر مدة الجلسة
-            </h3>
-            <p style={{fontSize:11.5,color:"var(--txts)",marginBottom:16}}>
-              السعر يحتسب تلقائياً بناءً على المدة
+            <p style={{fontSize:11.5,fontWeight:700,color:"var(--txts)",marginBottom:9}}>
+              المواعيد المتاحة
             </p>
-            <div style={{display:"flex",gap:12}}>
-              {DURATIONS.map(d=>{
-                const sel=dur?.id===d.id;
-                const c=d.price;
+            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+              {slotsFor(day).map(sl=>{
+                const sel=time===sl;
                 return (
-                  <div key={d.id} className={`dur-card${sel?" on":""}`}
-                    onClick={()=>setDur(d)}>
-                    {sel&&(
-                      <div style={{
-                        position:"absolute",top:8,left:8,
-                        width:18,height:18,borderRadius:"50%",
-                        background:"var(--p)",display:"flex",
-                        alignItems:"center",justifyContent:"center"
-                      }}>
-                        <span style={{color:"white",fontSize:8,fontWeight:600}}>✓</span>
-                      </div>
-                    )}
-                    {!d.surcharge&&(
-                      <div style={{
-                        position:"absolute",top:8,right:8,
-                        background:"#C08000",
-                        borderRadius:16,padding:"3px 7px",
-                        fontSize:8,fontWeight:600,color:"white",
-                        boxShadow:"0 2px 8px rgba(240,165,0,.35)",
-                        display:"flex",alignItems:"center",gap:3
-                      }}>{Ico.bestDeal()} الأوفر</div>
-                    )}
-                    <div style={{marginBottom:8}}>{Ico[d.icon](sel?"var(--p)":"var(--txts)", 28)}</div>
-                    <div style={{fontSize:11,fontWeight:600,color:"var(--txt)",marginBottom:7}}>
-                      {d.label}
-                    </div>
-                    <div style={{fontSize:16,fontWeight:700,color:sel?"var(--p)":"var(--txt)"}}>
-                      {c} <span style={{fontSize:10,fontWeight:700}}>ر.س</span>
-                    </div>
-                  </div>
+                  <button key={sl} onClick={()=>setTime(sl)}
+                    className="btn" style={{
+                      padding:"10px 17px",borderRadius:16,
+                      border:`2px solid ${sel?"var(--p)":"var(--brd)"}`,
+                      background:sel?"var(--p)":"white",
+                      color:sel?"white":"var(--txt)",
+                      fontSize:12.5,fontWeight:700
+                    }}>{sl}</button>
                 );
               })}
             </div>
@@ -1197,20 +1193,21 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
               <span style={{opacity:.4}}>·</span>
               {Ico.timeSm()} {time}
               <span style={{opacity:.4}}>·</span>
-              {dur.label}
+              {type.label}
             </div>
             <div style={{fontSize:15,fontWeight:700,color:"var(--p)"}}>{cost} ر.س</div>
           </div>
         )}
 
-        <button className="btn" onClick={()=>ready&&onConfirm(day,time,dur,cost)}
+        <button className="btn"
+          onClick={()=>ready&&onConfirm(day,time,{id:type.id,label:`${type.label} — ${SESSION_DURATION}`},cost)}
           disabled={!ready} style={{
             background:ready?svc?.grad||"#23302C":"var(--brd)",
             color:ready?"white":"var(--txts)",
             borderRadius:16,padding:19,fontSize:15.5,fontWeight:600,width:"100%",
             boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)"
           }}>
-          {!day?"اختر يوماً أولاً":!time?"اختر الوقت":!dur?"اختر مدة الجلسة":"متابعة →"}
+          {!type?"اختر نوع الجلسة":!day?"اختر يوماً":!time?"اختر الوقت":"متابعة →"}
         </button>
       </div>
     </div>
@@ -1239,7 +1236,7 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
       `─────────────────\n` +
       `• اليوم: ${dayName}، ${day} ${MONTHS[_d.getMonth()]} ${_d.getFullYear()}\n` +
       `• الوقت: ${time}\n` +
-      `• مدة الجلسة: ${dur.label}\n` +
+      `• نوع الجلسة: ${dur.label}\n` +
       `• التكلفة: ${cost} ريال\n` +
       `─────────────────\n\n` +
       `أرجو التأكيد والتواصل معي. شكراً 🙏`;
@@ -1305,7 +1302,7 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
             {lbl:"الخدمة",  val:svc.title},
             {lbl:"التاريخ", val:`${day} ${MONTHS[new Date().getMonth()]} ${new Date().getFullYear()}`},
             {lbl:"الوقت",   val:time},
-            {lbl:"المدة",   val:dur.label}
+            {lbl:"الجلسة", val:dur.label}
           ].map((r,i)=>(
             <div key={i} style={{
               display:"flex",justifyContent:"space-between",alignItems:"center",
