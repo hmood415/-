@@ -161,6 +161,9 @@ async function saveBooking(bk) {
   await db.from("bookings").insert({
     client_phone:  bk.userInfo.phone,
     client_name:   bk.userInfo.name,
+    beneficiary_name:   bk.ben?.name   || null,
+    beneficiary_age:    bk.ben?.age ? Number(bk.ben.age) : null,
+    beneficiary_gender: bk.ben?.gender || null,
     service_title: bk.svc.title,
     provider_name: bk.p.name,
     provider_spec: bk.p.spec,
@@ -214,13 +217,13 @@ const PROVIDERS = [
   {
     id:1, name:"شوق السالم", spec:"أخصائية نطق وتواصل وتربية خاصة",
     sessions:null, rating:null, cost:90, real:true,
-    av:{bg:"#23302C",in:"شس"}, services:[1,3,4],
+    av:{bg:"#23302C",in:"شس"}, services:[1],
     availDays:[0,1,2,3,4,6],
     availSlots:{ 0:["11:40 ص","4:00 م"], 1:["11:40 ص","4:00 م"], 2:["11:40 ص","4:00 م"],
                  3:["11:40 ص","4:00 م"], 4:["11:40 ص","4:00 م"],
                  6:["2:00 م","3:00 م","4:00 م","5:00 م","6:00 م","7:00 م","8:00 م","9:00 م"] },
     avail:"الأحد – الخميس والسبت",
-    about:"أخصائية نطق وتواصل معتمدة، متخصصة في دعم أطفال طيف التوحد وصعوبات النطق وتأخر الكلام. تقدم جلسات فردية مخصصة لتطوير مهارات التواصل والمهارات الحياتية."
+    about:"أخصائية نطق وتواصل معتمدة، متخصصة في دعم الأطفال الذين يعانون من التأتأة وتأخر النطق ومشاكل نطق الأحرف. تقدم جلسات تقييم وجلسات ممارسة فردية."
   },
   {
     id:2, name:"اختبار", spec:"مختص تجريبي",
@@ -1024,6 +1027,7 @@ function UserInfoPage({ prov, svc, onNext, onBack }) {
 /* ── BOOKING PAGE ── */
 
 function BookingPage({ p, svc, onConfirm, onBack }) {
+  const [ben,  setBen]  = useState({name:"", age:"", gender:""});
   const [type, setType] = useState(null);
   const [day,  setDay]  = useState(null);
   const [time, setTime] = useState(null);
@@ -1045,9 +1049,10 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
     return TIMES.flatMap(t=>t.slots);
   };
 
+  const benOk = ben.name.trim().length>=2 && +ben.age>0 && +ben.age<100 && ben.gender;
   const cost  = type ? type.price : null;
-  const ready = type && day && time;
-  const step  = !type ? 1 : !day ? 2 : !time ? 3 : 4;
+  const ready = benOk && type && day && time;
+  const step  = !benOk ? 1 : !type ? 2 : !day ? 3 : !time ? 4 : 5;
 
   return (
     <div className="page">
@@ -1055,7 +1060,7 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
         <h1 style={{fontSize:19,fontWeight:700,marginBottom:3,letterSpacing:"-.2px"}}>احجز جلستك</h1>
         <p style={{fontSize:12,opacity:.82,marginBottom:12}}>مع {p.name}</p>
         <div style={{display:"flex",gap:5,alignItems:"center"}}>
-          {["نوع الجلسة","التاريخ","الوقت"].map((lbl,i)=>(
+          {["المستفيد","النوع","التاريخ","الوقت"].map((lbl,i)=>(
             <div key={i} style={{display:"flex",alignItems:"center",gap:5}}>
               <div style={{
                 width:22,height:22,borderRadius:"50%",
@@ -1067,7 +1072,7 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
                 {step>i+1?"✓":i+1}
               </div>
               <span style={{fontSize:10.5,fontWeight:700,opacity:step>=i+1?1:.5}}>{lbl}</span>
-              {i<2&&<div style={{width:14,height:1,background:"rgba(255,255,255,.28)"}}/>}
+              {i<3&&<div style={{width:10,height:1,background:"rgba(255,255,255,.28)"}}/>}
             </div>
           ))}
         </div>
@@ -1075,8 +1080,61 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
 
       <div style={{padding:"20px 16px"}}>
 
+        {/* بيانات المستفيد */}
+        <div className="asi" style={{
+          background:"white",borderRadius:16,padding:20,marginBottom:18,
+          boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
+          border:"1px solid var(--line)"
+        }}>
+          <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)",marginBottom:6,
+            display:"flex",alignItems:"center",gap:9}}>
+            {Ico.user("var(--p)")} بيانات المستفيد
+          </h3>
+          <p style={{fontSize:11.5,color:"var(--txts)",marginBottom:16}}>
+            الشخص الذي ستُقدَّم له الجلسة
+          </p>
+
+          <label style={{fontSize:12.5,fontWeight:600,color:"var(--txt)",display:"block",marginBottom:7}}>
+            اسم المستفيد *
+          </label>
+          <input className="inp" value={ben.name} placeholder="مثال: محمد"
+            onChange={e=>setBen({...ben, name:e.target.value})}
+            style={{marginBottom:14}}/>
+
+          <div style={{display:"flex",gap:12,marginBottom:14}}>
+            <div style={{width:110}}>
+              <label style={{fontSize:12.5,fontWeight:600,color:"var(--txt)",display:"block",marginBottom:7}}>
+                العمر *
+              </label>
+              <input className="inp" value={ben.age} type="tel" maxLength={2} placeholder="٥"
+                onChange={e=>setBen({...ben, age:e.target.value.replace(/[^0-9]/g,"")})}/>
+            </div>
+            <div style={{flex:1}}>
+              <label style={{fontSize:12.5,fontWeight:600,color:"var(--txt)",display:"block",marginBottom:7}}>
+                الجنس *
+              </label>
+              <div style={{display:"flex",gap:8}}>
+                {["ذكر","أنثى"].map(g=>{
+                  const sel=ben.gender===g;
+                  return (
+                    <button key={g} className="btn" onClick={()=>setBen({...ben, gender:g})}
+                      style={{
+                        flex:1,padding:"13px 4px",borderRadius:13,
+                        border:`1px solid ${sel?"var(--acc)":"var(--brd)"}`,
+                        background:sel?"#F0F7F4":"white",
+                        color:sel?"var(--acc)":"var(--txts)",
+                        fontSize:13,fontWeight:600
+                      }}>{g}</button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* نوع الجلسة */}
-        <div className="asi" style={{marginBottom:18}}>
+        {benOk && (
+        <div className="au" style={{marginBottom:18}}>
           <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)",marginBottom:7,
             display:"flex",alignItems:"center",gap:9}}>
             {Ico.clock("var(--p)")} نوع الجلسة
@@ -1114,9 +1172,10 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
             })}
           </div>
         </div>
+        )}
 
         {/* التقويم */}
-        {type && (
+        {benOk && type && (
         <div className="au" style={{
           background:"white",borderRadius:16,padding:22,
           marginBottom:18,
@@ -1155,7 +1214,7 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
         )}
 
         {/* الوقت */}
-        {type && day && (
+        {benOk && type && day && (
           <div className="au" style={{marginBottom:18}}>
             <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)",marginBottom:14,
               display:"flex",alignItems:"center",gap:9}}>
@@ -1200,14 +1259,14 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
         )}
 
         <button className="btn"
-          onClick={()=>ready&&onConfirm(day,time,{id:type.id,label:`${type.label} — ${SESSION_DURATION}`},cost)}
+          onClick={()=>ready&&onConfirm(day,time,{id:type.id,label:`${type.label} — ${SESSION_DURATION}`},cost,{...ben,name:ben.name.trim()})}
           disabled={!ready} style={{
             background:ready?svc?.grad||"#23302C":"var(--brd)",
             color:ready?"white":"var(--txts)",
             borderRadius:16,padding:19,fontSize:15.5,fontWeight:600,width:"100%",
             boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)"
           }}>
-          {!type?"اختر نوع الجلسة":!day?"اختر يوماً":!time?"اختر الوقت":"متابعة →"}
+          {!benOk?"أكمل بيانات المستفيد":!type?"اختر نوع الجلسة":!day?"اختر يوماً":!time?"اختر الوقت":"متابعة →"}
         </button>
       </div>
     </div>
@@ -1217,7 +1276,7 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
 /* ── CONFIRMATION PAGE ── */
 
 function ConfirmPage({ bk, onConfirm, onBack }) {
-  const { p, svc, day, time, dur, cost, userInfo } = bk;
+  const { p, svc, day, time, dur, cost, userInfo, ben } = bk;
 
   const send = () => {
     const AR_DAYS = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
@@ -1225,9 +1284,14 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
     const dayName = AR_DAYS[new Date(_d.getFullYear(), _d.getMonth(), day).getDay()];
     const msg =
       `مرحباً، أود تأكيد حجزي في منصة مدرك 🌿\n\n` +
-      `👤 *بيانات العميل:*\n` +
+      `👤 *بيانات ولي الأمر:*\n` +
       `• الاسم: ${userInfo.name}\n` +
       `• الجوال: ${userInfo.phone}\n\n` +
+      (ben ?
+        `🧒 *بيانات المستفيد:*\n` +
+        `• الاسم: ${ben.name}\n` +
+        `• العمر: ${ben.age} سنة\n` +
+        `• الجنس: ${ben.gender}\n\n` : ``) +
       `📋 *تفاصيل الحجز:*\n` +
       `• الخدمة: ${svc.title}\n` +
       `• المختص: ${p.name}\n` +
@@ -1281,6 +1345,33 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
             <span style={{fontSize:13.5,fontWeight:600,color:"var(--txt)"}}>{userInfo.phone}</span>
           </div>
         </div>
+
+        {ben && (
+        <div style={{
+          background:"white",borderRadius:16,padding:20,
+          marginBottom:14,
+          boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
+          border:"1px solid var(--line)"
+        }}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:16,
+            paddingBottom:14,borderBottom:"1px solid #F3F5F3"}}>
+            <div style={{width:42,height:42,borderRadius:16,
+              background:"var(--sand)",border:"1px solid var(--pbg)",
+              display:"flex",alignItems:"center",justifyContent:"center"}}>
+              {Ico.user("var(--p)")}
+            </div>
+            <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>المستفيد</h3>
+          </div>
+          {[{lbl:"الاسم",val:ben.name},{lbl:"العمر",val:`${ben.age} سنة`},{lbl:"الجنس",val:ben.gender}].map((r,i)=>(
+            <div key={i} style={{display:"flex",justifyContent:"space-between",
+              padding:i===0?"0 0 12px":"12px 0 0",
+              borderBottom:i<2?"1px solid #F3F5F3":"none"}}>
+              <span style={{fontSize:12.5,color:"var(--txts)"}}>{r.lbl}</span>
+              <span style={{fontSize:13.5,fontWeight:600,color:"var(--txt)"}}>{r.val}</span>
+            </div>
+          ))}
+        </div>
+        )}
 
         {/* Booking summary */}
         <div style={{
@@ -1791,8 +1882,8 @@ function App() {
       )}
       {page==="booking" && prov && (
         <BookingPage p={prov} svc={svc}
-          onConfirm={(d,t,dur,cost)=>{
-            setBk({p:prov,svc,day:d,time:t,dur,cost,userInfo});
+          onConfirm={(d,t,dur,cost,ben)=>{
+            setBk({p:prov,svc,day:d,time:t,dur,cost,userInfo,ben});
             nav("confirm");
           }}
           onBack={()=>nav("userinfo")}/>
