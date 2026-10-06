@@ -1042,11 +1042,22 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
   for(let d=1;d<=dim;d++) grid.push(d);
 
   const dowOf = d => new Date(YR,MO,d).getDay();
+
+  // أقرب موعد متاح بعد ٢٤ ساعة من الآن
+  const CUTOFF = new Date(_now.getTime() + 24*60*60*1000);
+  const slotDate = (d, sl) => {
+    const m = String(sl).match(/(\d{1,2}):(\d{2})\s*(ص|م)/);
+    if(!m) return null;
+    let h = Number(m[1]) % 12;
+    if(m[3]==="م") h += 12;
+    return new Date(YR, MO, d, h, Number(m[2]));
+  };
   const slotsFor = d => {
     if(!d) return [];
-    if(p.availSlots) return p.availSlots[dowOf(d)] || [];
-    if(p.availTimes) return p.availTimes;
-    return TIMES.flatMap(t=>t.slots);
+    const all = p.availSlots ? (p.availSlots[dowOf(d)] || [])
+              : p.availTimes ? p.availTimes
+              : TIMES.flatMap(t=>t.slots);
+    return all.filter(sl => { const dt = slotDate(d, sl); return !dt || dt >= CUTOFF; });
   };
 
   const benOk = ben.name.trim().length>=2 && +ben.age>0 && +ben.age<100 && ben.gender;
@@ -1140,7 +1151,7 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
             {Ico.clock("var(--p)")} نوع الجلسة
           </h3>
           <p style={{fontSize:11.5,color:"var(--txts)",marginBottom:14}}>
-            مدة الجلسة {SESSION_DURATION} لكلا النوعين
+            مدة الجلسة {SESSION_DURATION} لكلا النوعين · الحجز قبل الموعد بـ٢٤ ساعة على الأقل
           </p>
           <div style={{display:"flex",flexDirection:"column",gap:10}}>
             {SESSION_TYPES.map(t=>{
@@ -1223,6 +1234,11 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
             <p style={{fontSize:11.5,fontWeight:700,color:"var(--txts)",marginBottom:9}}>
               المواعيد المتاحة
             </p>
+            {slotsFor(day).length===0 && (
+              <p style={{fontSize:12,color:"var(--txts)",lineHeight:1.8,marginBottom:9}}>
+                لا توجد مواعيد متاحة في هذا اليوم — الحجز يتطلب ٢٤ ساعة على الأقل قبل موعد الجلسة.
+              </p>
+            )}
             <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
               {slotsFor(day).map(sl=>{
                 const sel=time===sl;
