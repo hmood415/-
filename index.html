@@ -202,6 +202,44 @@ async function saveClient(name, phone) {
   await db.from("clients").upsert({ name, phone }, { onConflict: "phone" });
 }
 
+/* ── سجلّ الحجوزات في جهاز العميل (بدون قاعدة بيانات) ── */
+const LS_KEY = "madrik_bookings_v1";
+
+function localBookings() {
+  try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); }
+  catch { return []; }
+}
+
+function saveLocalBooking(bk) {
+  try {
+    const mo = bk.mo ?? new Date().getMonth();
+    const yr = bk.yr ?? new Date().getFullYear();
+    const list = localBookings();
+    list.unshift({
+      id:      `${Date.now()}`,
+      svc:     bk.svc.title,
+      prov:    bk.p.name,
+      day:     bk.day, mo, yr,
+      date:    `${bk.day} ${MONTHS[mo]} ${yr}`,
+      time:    bk.time,
+      dur:     bk.dur.label,
+      cost:    bk.cost,
+      ben:     bk.ben || null,
+      client:  bk.userInfo ? { name: bk.userInfo.name, phone: bk.userInfo.phone } : null,
+      ts:      Date.now()
+    });
+    localStorage.setItem(LS_KEY, JSON.stringify(list.slice(0, 50)));
+  } catch (e) { /* الوضع الخاص في المتصفح قد يمنع التخزين */ }
+}
+
+// الموعد يُعدّ منتهياً بعد مرور وقته
+function bookingStatus(b) {
+  const t = String(b.time || "").match(/(\d{1,2}):(\d{2})\s*(ص|م)/);
+  let h = t ? Number(t[1]) % 12 : 23, mi = t ? Number(t[2]) : 59;
+  if (t && t[3] === "م") h += 12;
+  return new Date(b.yr, b.mo, b.day, h, mi) > new Date() ? "upcoming" : "completed";
+}
+
 async function saveBooking(bk) {
   if (!db) return;
   await db.from("bookings").insert({
@@ -1506,6 +1544,7 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
       `─────────────────\n\n` +
       `أرجو التأكيد والتواصل معي. شكراً 🙏`;
     openWA(msg);
+    saveLocalBooking(bk);
     saveBooking(bk);
     onConfirm();
   };
@@ -1676,7 +1715,13 @@ function ApptsPage({ userInfo }) {
       });
   }, [userInfo?.phone]);
 
-  // إذا وُجد اتصال بقاعدة البيانات استخدمها، وإلا استخدم البيانات التجريبية
+  const [localAppts, setLocalAppts] = useState(() => localBookings());
+
+  const iconFor = t => t.includes("انطاق") ? "speech"
+                   : t.includes("طعام")  ? "food"
+                   : t.includes("تواصل") ? "social" : "skills";
+
+  // قاعدة البيانات إن وُجدت، وإلا سجلّ الجهاز
   const allAppts = dbAppts !== null ? dbAppts.map(a => ({
     id:     a.id,
     svc:    a.service_title,
@@ -1690,7 +1735,18 @@ function ApptsPage({ userInfo }) {
     status: a.status === "completed" ? "completed" : "upcoming",
     cost:   a.cost,
     fromDB: true
-  })) : APPTS;
+  })) : localAppts.map(b => ({
+    id:     b.id,
+    svc:    b.svc,
+    icon:   iconFor(b.svc || ""),
+    prov:   b.prov,
+    date:   b.date,
+    time:   b.time,
+    dur:    b.dur,
+    status: bookingStatus(b),
+    cost:   b.cost,
+    ben:    b.ben
+  }));
 
   const up   = allAppts.filter(a=>a.status==="upcoming");
   const done = allAppts.filter(a=>a.status==="completed");
@@ -1789,6 +1845,11 @@ function ApptsPage({ userInfo }) {
                     <div>
                       <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)",letterSpacing:"-.1px"}}>{a.svc}</h3>
                       <p style={{fontSize:11.5,color:"var(--txts)",display:"flex",alignItems:"center",gap:3}}>{Ico.providerSm()} {a.prov}</p>
+                      {a.ben && (
+                        <p style={{fontSize:11,color:"var(--mut2)",marginTop:2}}>
+                          المستفيد: {a.ben.name} · {a.ben.age} سنة
+                        </p>
+                      )}
                     </div>
                   </div>
                   <span style={{
