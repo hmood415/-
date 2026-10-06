@@ -190,7 +190,7 @@ async function saveBooking(bk) {
     service_title: bk.svc.title,
     provider_name: bk.p.name,
     provider_spec: bk.p.spec,
-    booking_date:  `${bk.day} ${MONTHS[5]} 2026`,
+    booking_date:  `${bk.day} ${MONTHS[bk.mo ?? new Date().getMonth()]} ${bk.yr ?? new Date().getFullYear()}`,
     booking_time:  bk.time,
     duration_label:bk.dur.label,
     duration_id:   bk.dur.id,
@@ -263,13 +263,6 @@ const PROVIDERS = [
     ],
     insta:"dr_speech1",
   },
-  {
-    id:2, name:"اختبار", spec:"مختص تجريبي",
-    sessions:120, rating:4.7, cost:90, real:false,
-    av:{bg:"#23302C",in:"اخ"}, services:[1,2,3,4],
-    avail:"السبت – الأربعاء",
-    about:"هذا حساب تجريبي لأغراض اختبار المنصة فقط. لا يُقدّم جلسات حقيقية."
-  }
 ];
 
 const APPTS = [];
@@ -291,6 +284,8 @@ const SESSION_DURATION = "٣٠ دقيقة";
 const MONTHS = ["يناير","فبراير","مارس","أبريل","مايو","يونيو","يوليو","أغسطس","سبتمبر","أكتوبر","نوفمبر","ديسمبر"];
 const WA_NUM = "966542378596";
 const openWA = m => window.open(`https://wa.me/${WA_NUM}?text=${encodeURIComponent(m)}`,"_blank");
+const AR_DAYS = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
+const fmtDate = (d,m,y) => `${AR_DAYS[new Date(y,m,d).getDay()]}، ${d} ${MONTHS[m]} ${y}`;
 
 /* ── SVG ICONS ── */
 const Ico = {
@@ -701,16 +696,27 @@ function HomePage({ onSvc }) {
           </span>
         </div>
 
-        {SERVICES.map((s,i)=>(
-          <div key={s.id} className="srow" onClick={()=>onSvc(s)}>
+        {SERVICES.map((s,i)=>{
+          const soon = !PROVIDERS.some(p=>p.services.includes(s.id));
+          return (
+          <div key={s.id} className="srow" onClick={()=>{ if(!soon) onSvc(s); }}
+            style={soon?{cursor:"default",opacity:.72}:undefined}>
             <span style={{
-              fontSize:12,fontWeight:600,color:"var(--acc)",
+              fontSize:12,fontWeight:600,color:soon?"var(--mut2)":"var(--acc)",
               letterSpacing:".04em",paddingTop:3,minWidth:20
             }}>{String(i+1).padStart(2,"0")}</span>
 
             <div style={{flex:1,minWidth:0}}>
-              <h3 style={{fontSize:16.5,fontWeight:600,color:"var(--ink)",letterSpacing:"-.2px"}}>
+              <h3 style={{fontSize:16.5,fontWeight:600,color:"var(--ink)",letterSpacing:"-.2px",
+                display:"flex",alignItems:"center",gap:8,flexWrap:"wrap"}}>
                 {s.title}
+                {soon && (
+                  <span style={{
+                    fontSize:10.5,fontWeight:500,color:"var(--mut)",
+                    background:"var(--sand)",border:"1px solid var(--line)",
+                    borderRadius:999,padding:"3px 10px"
+                  }}>قريباً</span>
+                )}
               </h3>
               <p style={{fontSize:13,color:"var(--mut)",lineHeight:1.8,marginTop:6}}>
                 {s.desc}
@@ -720,11 +726,14 @@ function HomePage({ onSvc }) {
               </p>
             </div>
 
-            <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style={{marginTop:4,flexShrink:0}}>
-              <path d="M10 3L5 8l5 5" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round"/>
-            </svg>
+            {!soon && (
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" style={{marginTop:4,flexShrink:0}}>
+                <path d="M10 3L5 8l5 5" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round"/>
+              </svg>
+            )}
           </div>
-        ))}
+          );
+        })}
       </section>
 
       {/* لماذا مدرك */}
@@ -1150,8 +1159,11 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
   const [day,  setDay]  = useState(null);
   const [time, setTime] = useState(null);
 
+  const [moOff, setMoOff] = useState(0);   // 0 = الشهر الحالي، 1 = الشهر القادم
   const _now = new Date();
-  const TODAY=_now.getDate(), YR=_now.getFullYear(), MO=_now.getMonth();
+  const TODAY=_now.getDate();
+  const _view = new Date(_now.getFullYear(), _now.getMonth()+moOff, 1);
+  const YR=_view.getFullYear(), MO=_view.getMonth();
   const dim = new Date(YR,MO+1,0).getDate();
   const fd  = new Date(YR,MO,1).getDay();
   const DAYS = ["أح","إث","ثل","أر","خم","جم","سب"];
@@ -1311,10 +1323,25 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
           boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
           border:"1px solid var(--line)"
         }}>
-          <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)",
-            textAlign:"center",marginBottom:18}}>
-            {MONTHS[MO]} {YR}
-          </h3>
+          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:18}}>
+            <button className="revbtn" aria-label="الشهر السابق" disabled={moOff===0}
+              onClick={()=>{ if(moOff>0){ setMoOff(moOff-1); setDay(null); setTime(null); } }}
+              style={{opacity:moOff===0?.35:1}}>
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                <path d="M6 3l5 5-5 5" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round"/>
+              </svg>
+            </button>
+            <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>
+              {MONTHS[MO]} {YR}
+            </h3>
+            <button className="revbtn" aria-label="الشهر القادم" disabled={moOff===1}
+              onClick={()=>{ if(moOff<1){ setMoOff(moOff+1); setDay(null); setTime(null); } }}
+              style={{opacity:moOff===1?.35:1}}>
+              <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                <path d="M10 3L5 8l5 5" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round"/>
+              </svg>
+            </button>
+          </div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:2,marginBottom:8}}>
             {DAYS.map(d=>(
               <div key={d} style={{textAlign:"center",fontSize:10.5,
@@ -1324,7 +1351,7 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
           <div style={{display:"grid",gridTemplateColumns:"repeat(7,1fr)",gap:4}}>
             {grid.map((d,i)=>{
               if(!d) return <div key={`e${i}`}/>;
-              const past=d<TODAY, sel=day===d, td=d===TODAY;
+              const past=moOff===0 && d<TODAY, sel=day===d, td=moOff===0 && d===TODAY;
               const unavail=past||slotsFor(d).length===0;
               return (
                 <div key={d} onClick={()=>{if(!unavail){setDay(d);setTime(null);}}}
@@ -1393,7 +1420,7 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
         )}
 
         <button className="btn"
-          onClick={()=>ready&&onConfirm(day,time,{id:type.id,label:`${type.label} — ${SESSION_DURATION}`},cost,{...ben,name:ben.name.trim()})}
+          onClick={()=>ready&&onConfirm({day,mo:MO,yr:YR},time,{id:type.id,label:`${type.label} — ${SESSION_DURATION}`},cost,{...ben,name:ben.name.trim()})}
           disabled={!ready} style={{
             background:ready?svc?.grad||"#23302C":"var(--brd)",
             color:ready?"white":"var(--txts)",
@@ -1411,11 +1438,10 @@ function BookingPage({ p, svc, onConfirm, onBack }) {
 
 function ConfirmPage({ bk, onConfirm, onBack }) {
   const { p, svc, day, time, dur, cost, userInfo, ben } = bk;
+  const MO = bk.mo ?? new Date().getMonth();
+  const YR = bk.yr ?? new Date().getFullYear();
 
   const send = () => {
-    const AR_DAYS = ["الأحد","الاثنين","الثلاثاء","الأربعاء","الخميس","الجمعة","السبت"];
-    const _d = new Date();
-    const dayName = AR_DAYS[new Date(_d.getFullYear(), _d.getMonth(), day).getDay()];
     const msg =
       `مرحباً، أود تأكيد حجزي في منصة مدرك 🌿\n\n` +
       `👤 *بيانات ولي الأمر:*\n` +
@@ -1432,7 +1458,7 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
       `• التخصص: ${p.spec}\n\n` +
       `📅 *موعد الجلسة:*\n` +
       `─────────────────\n` +
-      `• اليوم: ${dayName}، ${day} ${MONTHS[_d.getMonth()]} ${_d.getFullYear()}\n` +
+      `• اليوم: ${fmtDate(day, MO, YR)}\n` +
       `• الوقت: ${time}\n` +
       `• نوع الجلسة: ${dur.label}\n` +
       `• التكلفة: ${cost} ريال\n` +
@@ -1525,7 +1551,7 @@ function ConfirmPage({ bk, onConfirm, onBack }) {
           </div>
           {[
             {lbl:"الخدمة",  val:svc.title},
-            {lbl:"التاريخ", val:`${day} ${MONTHS[new Date().getMonth()]} ${new Date().getFullYear()}`},
+            {lbl:"التاريخ", val:`${day} ${MONTHS[MO]} ${YR}`},
             {lbl:"الوقت",   val:time},
             {lbl:"الجلسة", val:dur.label}
           ].map((r,i)=>(
@@ -1761,8 +1787,8 @@ function ApptsPage({ userInfo }) {
 
 function ProfilePage({ userInfo }) {
   const [notif,setNotif] = useState(true);
-  const name  = userInfo?.name  || "أحمد محمد";
-  const phone = userInfo?.phone || "+966 54 237 8596";
+  const name  = userInfo?.name  || "زائر";
+  const phone = userInfo?.phone || "—";
 
   const joinSpec = () => {
     openWA("مرحباً، أود تقديم طلب الانضمام كمختص في منصة مدرك 🌿\n\nأرجو إعلامي بالخطوات والمتطلبات اللازمة للانضمام. شكراً 🙏");
@@ -2025,8 +2051,9 @@ function App() {
       )}
       {page==="booking" && prov && (
         <BookingPage p={prov} svc={svc}
-          onConfirm={(d,t,dur,cost,ben)=>{
-            setBk({p:prov,svc,day:d,time:t,dur,cost,userInfo,ben});
+          onConfirm={(dateObj,t,dur,cost,ben)=>{
+            setBk({p:prov,svc,day:dateObj.day,mo:dateObj.mo,yr:dateObj.yr,
+                   time:t,dur,cost,userInfo,ben});
             nav("confirm");
           }}
           onBack={()=>nav("userinfo")}/>
