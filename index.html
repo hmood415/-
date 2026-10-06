@@ -838,7 +838,8 @@ function ProvidersPage({ svc, onProv, onBack }) {
 /* ── PROVIDER DETAIL ── */
 
 function ProviderDetail({ p, svc, onBook, onBack }) {
-  const [rev, setRev] = useState(0);
+  const [rev, setRev]   = useState(0);
+  const [more, setMore] = useState(false);
   const revGo = dir => {
     const row = document.getElementById("revrow");
     if(!row || !row.children.length) return;
@@ -849,165 +850,102 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
     const rtl  = getComputedStyle(row).direction === "rtl";  // في RTL يكون التمرير بالسالب
     row.scrollTo({ left: (rtl ? -1 : 1) * i * step, behavior:"smooth" });
   };
+
+  const tags = [
+    ...(p.focus || []),
+    ...SERVICES.filter(s=>p.services.includes(s.id)).map(s=>s.title)
+  ].filter((t,i,a)=>a.indexOf(t)===i);
+
+  const card = {
+    background:"white",borderRadius:16,
+    boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
+    border:"1px solid var(--line)"
+  };
+
   return (
-    <div className="page">
+    <React.Fragment>
+    <div className="page" style={{paddingBottom:152}}>
       <PageHdr grad={svc?.grad} onBack={onBack}>
-        <div style={{display:"flex",gap:18,alignItems:"flex-start"}}>
-          <Avatar p={p} size={66}/>
+        <div style={{display:"flex",gap:14,alignItems:"flex-start"}}>
+          <Avatar p={p} size={60}/>
           <div>
             {!p.real&&(
               <div style={{display:"inline-flex",alignItems:"center",gap:5,
                 background:"rgba(255,255,255,.16)",borderRadius:16,padding:"3px 10px",
-                border:"1px solid rgba(255,255,255,.24)",marginBottom:7}}>
+                border:"1px solid rgba(255,255,255,.24)",marginBottom:6}}>
                 <div style={{width:5,height:5,borderRadius:"50%",background:"rgba(255,255,255,.7)"}}/>
                 <span style={{fontSize:9,fontWeight:600,color:"rgba(255,255,255,.9)",letterSpacing:".2px"}}>مختص تجريبي — لأغراض العرض فقط</span>
               </div>
             )}
             <h1 style={{fontSize:19,fontWeight:700,marginBottom:4,letterSpacing:"-.2px"}}>{p.name}</h1>
-            <p style={{fontSize:12.5,opacity:.9,marginBottom:8}}>{p.spec}</p>
+            <p style={{fontSize:12.5,opacity:.9,marginBottom:7}}>{p.spec}</p>
             {p.rating!==null&&<StarsRow rating={p.rating}/>}
-            <div style={{
-              marginTop:9,display:"inline-flex",alignItems:"center",gap:6,
-              background:"rgba(255,255,255,.16)",borderRadius:16,
-              padding:"5px 12px",border:"1px solid rgba(255,255,255,.24)"
-            }}>
-              {Ico.clock("rgba(255,255,255,.9)")}
-              <span style={{fontSize:11.5,fontWeight:700}}>{p.avail}</span>
+            <div style={{display:"flex",gap:6,flexWrap:"wrap",marginTop:7}}>
+              <span style={{
+                display:"inline-flex",alignItems:"center",gap:6,
+                background:"rgba(255,255,255,.16)",borderRadius:999,
+                padding:"5px 12px",border:"1px solid rgba(255,255,255,.24)",
+                fontSize:11.5,fontWeight:600
+              }}>
+                {Ico.clock("rgba(255,255,255,.9)")} {p.avail}
+              </span>
+              <span style={{
+                display:"inline-flex",alignItems:"center",gap:6,
+                background:"rgba(255,255,255,.16)",borderRadius:999,
+                padding:"5px 12px",border:"1px solid rgba(255,255,255,.24)",
+                fontSize:11.5,fontWeight:600
+              }}>
+                تبدأ من {p.cost} ر.س · ٣٠ دقيقة
+              </span>
             </div>
           </div>
         </div>
       </PageHdr>
 
-      <div style={{padding:"20px 16px"}}>
-        <div style={{display:"grid",gridTemplateColumns:`repeat(${p.real?1:3},1fr)`,gap:12,marginBottom:18}}>
-          {[
-            !p.real&&{icon:Ico.sessions("var(--p)"), val:p.sessions,      lbl:"جلسة منجزة"},
-            !p.real&&{icon:Ico.starLg(),             val:`${p.rating}/5`, lbl:"التقييم"},
-            {icon:Ico.coin("var(--p)"),              val:p.cost,          lbl:"ر.س تبدأ من · جلسة ٣٠ دقيقة"}
-          ].filter(Boolean).map((s,i)=>(
-            <div key={i} style={{
-              background:"white",borderRadius:16,padding:"18px 8px",
-              textAlign:"center",
-              boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
-              border:"1px solid var(--line)"
-            }}>
-              <div style={{width:46,height:46,borderRadius:16,
-                background:"var(--sand)",
-                border:"1.5px solid var(--pbg)",
-                boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
-                display:"flex",alignItems:"center",justifyContent:"center",
-                margin:"0 auto 10px"}}>{s.icon}</div>
-              <div style={{fontSize:17,fontWeight:700,color:"var(--txt)"}}>{s.val}</div>
-              <div style={{fontSize:9.5,color:"var(--txts)",marginTop:3}}>{s.lbl}</div>
+      <div style={{padding:"16px 16px 0"}}>
+
+        {/* نبذة + مؤهلات + تخصصات في بطاقة واحدة */}
+        <div style={{...card, padding:"16px 18px", marginBottom:14}}>
+          <p style={{
+            fontSize:13,color:"var(--txts)",lineHeight:1.85,
+            display:"-webkit-box", WebkitBoxOrient:"vertical",
+            WebkitLineClamp: more ? "unset" : 3,
+            overflow: more ? "visible" : "hidden"
+          }}>{p.about}</p>
+          <button className="btn" onClick={()=>setMore(!more)} style={{
+            background:"transparent",color:"var(--acc)",padding:"6px 0 0",
+            fontSize:12,fontWeight:600
+          }}>{more ? "عرض أقل" : "عرض المزيد"}</button>
+
+          {p.credentials && (
+            <div style={{marginTop:12,paddingTop:12,borderTop:"1px solid #F3F5F3"}}>
+              {p.credentials.map((c,i)=>(
+                <div key={i} style={{display:"flex",alignItems:"center",gap:9,
+                  marginBottom:i<p.credentials.length-1?7:0}}>
+                  {Ico.check("var(--acc)")}
+                  <span style={{fontSize:12.5,color:"var(--ink2)"}}>{c}</span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          )}
 
-        <div style={{
-          background:"white",borderRadius:16,padding:20,
-          marginBottom:14,
-          boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
-          border:"1px solid var(--line)"
-        }}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-            <div style={{width:40,height:40,borderRadius:16,
-              background:"var(--sand)",
-              border:"1.5px solid var(--pbg)",
-              boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
-              display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.clipboard("var(--p)")}</div>
-            <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>نبذة عن المختص</h3>
-          </div>
-          <p style={{fontSize:13.5,color:"var(--txts)",lineHeight:1.9}}>{p.about}</p>
-        </div>
-
-        {p.credentials && (
-        <div style={{
-          background:"white",borderRadius:16,padding:20,
-          marginBottom:14,
-          boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
-          border:"1px solid var(--line)"
-        }}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-            <div style={{width:40,height:40,borderRadius:16,
-              background:"var(--sand)",border:"1px solid var(--pbg)",
-              display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.badgeLg ? Ico.badgeLg("var(--p)") : Ico.check("var(--p)")}</div>
-            <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>المؤهلات والخبرة</h3>
-          </div>
-          {p.credentials.map((c,i)=>(
-            <div key={i} style={{display:"flex",alignItems:"center",gap:11,
-              padding:"11px 0",
-              borderBottom:i<p.credentials.length-1?"1px solid #F3F5F3":"none"}}>
-              <span style={{width:5,height:5,borderRadius:"50%",background:"var(--acc)",flexShrink:0}}/>
-              <span style={{fontSize:13,color:"var(--ink2)",lineHeight:1.7}}>{c}</span>
+          {tags.length>0 && (
+            <div style={{marginTop:12,paddingTop:12,borderTop:"1px solid #F3F5F3",
+              display:"flex",gap:6,flexWrap:"wrap"}}>
+              {tags.map(t=>(
+                <span key={t} style={{
+                  background:"var(--sand)",color:"var(--ink2)",
+                  borderRadius:999,padding:"6px 12px",fontSize:11,fontWeight:500,
+                  border:"1px solid var(--line)"
+                }}>{t}</span>
+              ))}
             </div>
-          ))}
-        </div>
-        )}
-
-        {p.focus && (
-        <div style={{
-          background:"white",borderRadius:16,padding:20,
-          marginBottom:14,
-          boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
-          border:"1px solid var(--line)"
-        }}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-            <div style={{width:40,height:40,borderRadius:16,
-              background:"var(--sand)",border:"1px solid var(--pbg)",
-              display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.speech("var(--p)",20)}</div>
-            <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>الحالات التي تتعامل معها</h3>
-          </div>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-            {p.focus.map(f=>(
-              <span key={f} style={{
-                background:"var(--sand)",color:"var(--ink2)",
-                borderRadius:999,padding:"7px 14px",fontSize:11.5,fontWeight:500,
-                border:"1px solid var(--line)"
-              }}>{f}</span>
-            ))}
-          </div>
-        </div>
-        )}
-
-        <div style={{
-          background:"white",borderRadius:16,padding:20,
-          marginBottom:20,
-          boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
-          border:"1px solid var(--line)"
-        }}>
-          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
-            <div style={{width:40,height:40,borderRadius:16,
-              background:"var(--sand)",
-              border:"1.5px solid var(--pbg)",
-              boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
-              display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.stethoscope("var(--p)")}</div>
-            <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>تخصصاته</h3>
-          </div>
-          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-            {SERVICES.filter(s=>p.services.includes(s.id)).map(s=>(
-              <div key={s.id} style={{background:s.bg,color:s.acc,
-                borderRadius:16,padding:"6px 14px",fontSize:11.5,fontWeight:700,
-                display:"flex",alignItems:"center",gap:6}}>
-                {Ico[s.icon](s.acc, 14)}{s.title}
-              </div>
-            ))}
-          </div>
+          )}
         </div>
 
-        <button className="btn" onClick={onBook} style={{
-          background:svc?.grad||"#23302C",
-          color:"white",borderRadius:16,padding:20,fontSize:16,fontWeight:600,
-          width:"100%",boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
-          display:"flex",alignItems:"center",justifyContent:"center",gap:12
-        }}>
-          <div style={{width:30,height:30,borderRadius:16,
-            background:"rgba(255,255,255,.18)",display:"flex",
-            alignItems:"center",justifyContent:"center"}}>{Ico.cal("white")}</div>
-          احجز جلسة الآن
-        </button>
-
+        {/* آراء المستفيدين */}
         {p.reviews && p.reviews.length>0 && (
-          <div style={{marginTop:26}}>
+          <div style={{marginTop:18}}>
             <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
               <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>آراء المستفيدين</h3>
               <div style={{display:"flex",alignItems:"center",gap:7}}>
@@ -1020,17 +958,15 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
               </div>
             </div>
 
-            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
               <p style={{fontSize:11.5,color:"var(--txts)"}}>اسحب لتصفّح الآراء</p>
               <div style={{display:"flex",gap:8}}>
-                <button className="revbtn" aria-label="السابق"
-                  onClick={()=>revGo(-1)}>
+                <button className="revbtn" aria-label="السابق" onClick={()=>revGo(-1)}>
                   <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
                     <path d="M6 3l5 5-5 5" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round"/>
                   </svg>
                 </button>
-                <button className="revbtn" aria-label="التالي"
-                  onClick={()=>revGo(1)}>
+                <button className="revbtn" aria-label="التالي" onClick={()=>revGo(1)}>
                   <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
                     <path d="M10 3L5 8l5 5" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round"/>
                   </svg>
@@ -1041,27 +977,50 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
             <div className="revrow" id="revrow">
               {p.reviews.map((r,i)=>(
                 <div key={i} className="revcard">
-                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:9}}>
                     <div style={{display:"flex",alignItems:"center",gap:9}}>
                       <div style={{
-                        width:30,height:30,borderRadius:"50%",background:"var(--sand)",
+                        width:28,height:28,borderRadius:"50%",background:"var(--sand)",
                         border:"1px solid var(--line)",flexShrink:0,
                         display:"flex",alignItems:"center",justifyContent:"center"
                       }}>{Ico.user("var(--mut)")}</div>
-                      <span style={{fontSize:12,color:"var(--txts)",fontWeight:500}}>ولي أمر مستفيد</span>
+                      <span style={{fontSize:11.5,color:"var(--txts)",fontWeight:500}}>ولي أمر مستفيد</span>
                     </div>
                     <div style={{display:"flex",gap:2}}>
                       {[1,2,3,4,5].map(n=><span key={n}>{Ico.star(true)}</span>)}
                     </div>
                   </div>
-                  <p style={{fontSize:12.5,color:"var(--ink2)",lineHeight:1.95}}>{r.text}</p>
+                  <p style={{fontSize:12.5,color:"var(--ink2)",lineHeight:1.9}}>{r.text}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
       </div>
+
     </div>
+
+      {/* شريط الحجز الثابت */}
+      <div style={{
+        position:"fixed",bottom:68,left:"50%",transform:"translateX(-50%)",
+        width:"100%",maxWidth:430,zIndex:998,
+        background:"rgba(255,255,255,.97)",
+        backdropFilter:"blur(10px)",
+        borderTop:"1px solid var(--line)",
+        padding:"10px 16px"
+      }}>
+        <button className="btn" onClick={onBook} style={{
+          background:svc?.grad||"#23302C",
+          color:"white",borderRadius:14,padding:"15px 18px",fontSize:14.5,fontWeight:600,
+          width:"100%",display:"flex",alignItems:"center",justifyContent:"space-between"
+        }}>
+          <span style={{display:"flex",alignItems:"center",gap:9}}>
+            {Ico.cal("white")} احجز جلسة الآن
+          </span>
+          <span style={{fontSize:12.5,opacity:.85,fontWeight:500}}>من {p.cost} ر.س</span>
+        </button>
+      </div>
+    </React.Fragment>
   );
 }
 
