@@ -127,6 +127,29 @@
     .inp:focus { border-color: var(--acc); box-shadow: 0 0 0 3px rgba(47,122,102,.10); }
     .inp::placeholder { color: var(--mut2); }
 
+    /* شريط آراء أفقي */
+    .revrow {
+      display: flex; gap: 10px; overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+      padding: 2px 16px 6px;
+      margin: 0 -16px;
+    }
+    .revrow::-webkit-scrollbar { display: none; }
+    .revcard {
+      flex: 0 0 85%; scroll-snap-align: start;
+      background: white; border: 1px solid var(--line); border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045);
+    }
+    .revbtn {
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--line); background: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .revbtn:active { background: var(--sand); }
+
     /* tag pill */
     .tpill {
       display: inline-flex; align-items: center; gap: 4px;
@@ -815,6 +838,17 @@ function ProvidersPage({ svc, onProv, onBack }) {
 /* ── PROVIDER DETAIL ── */
 
 function ProviderDetail({ p, svc, onBook, onBack }) {
+  const [rev, setRev] = useState(0);
+  const revGo = dir => {
+    const row = document.getElementById("revrow");
+    if(!row || !row.children.length) return;
+    const n = row.children.length;
+    const i = Math.min(Math.max(rev + dir, 0), n-1);
+    setRev(i);
+    const step = row.children[0].offsetWidth + 10;           // عرض البطاقة + الفراغ
+    const rtl  = getComputedStyle(row).direction === "rtl";  // في RTL يكون التمرير بالسالب
+    row.scrollTo({ left: (rtl ? -1 : 1) * i * step, behavior:"smooth" });
+  };
   return (
     <div className="page">
       <PageHdr grad={svc?.grad} onBack={onBack}>
@@ -974,25 +1008,39 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
 
         {p.reviews && p.reviews.length>0 && (
           <div style={{marginTop:26}}>
-            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:6}}>
               <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>آراء المستفيدين</h3>
               <div style={{display:"flex",alignItems:"center",gap:7}}>
                 <div style={{display:"flex",gap:2}}>
                   {[1,2,3,4,5].map(i=><span key={i}>{Ico.star(true)}</span>)}
                 </div>
                 <span style={{fontSize:12,color:"var(--txts)",fontWeight:500}}>
-                  5.0 · {p.reviews.length} آراء
+                  {p.reviews.length} آراء
                 </span>
               </div>
             </div>
 
-            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:12}}>
+              <p style={{fontSize:11.5,color:"var(--txts)"}}>اسحب لتصفّح الآراء</p>
+              <div style={{display:"flex",gap:8}}>
+                <button className="revbtn" aria-label="السابق"
+                  onClick={()=>revGo(-1)}>
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                    <path d="M6 3l5 5-5 5" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round"/>
+                  </svg>
+                </button>
+                <button className="revbtn" aria-label="التالي"
+                  onClick={()=>revGo(1)}>
+                  <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                    <path d="M10 3L5 8l5 5" stroke="var(--ink)" strokeWidth="1.6" strokeLinecap="round"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <div className="revrow" id="revrow">
               {p.reviews.map((r,i)=>(
-                <div key={i} style={{
-                  background:"white",borderRadius:16,padding:"16px 18px",
-                  border:"1px solid var(--line)",
-                  boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)"
-                }}>
+                <div key={i} className="revcard">
                   <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
                     <div style={{display:"flex",alignItems:"center",gap:9}}>
                       <div style={{
@@ -1006,7 +1054,7 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
                       {[1,2,3,4,5].map(n=><span key={n}>{Ico.star(true)}</span>)}
                     </div>
                   </div>
-                  <p style={{fontSize:13,color:"var(--ink2)",lineHeight:1.95}}>{r.text}</p>
+                  <p style={{fontSize:12.5,color:"var(--ink2)",lineHeight:1.95}}>{r.text}</p>
                 </div>
               ))}
             </div>
