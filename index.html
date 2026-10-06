@@ -215,7 +215,7 @@ const SERVICES = [
 
 const PROVIDERS = [
   {
-    id:1, name:"شوق السالم", spec:"أخصائية نطق وتواصل وتربية خاصة",
+    id:1, name:"شوق السالم", spec:"أخصائية نطق وتخاطب · مرخّصة من هيئة التخصصات الصحية",
     sessions:null, rating:null, cost:90, real:true,
     av:{bg:"#23302C",in:"شس"}, services:[1],
     availDays:[0,1,2,3,4,6],
@@ -223,7 +223,22 @@ const PROVIDERS = [
                  3:["11:40 ص","4:00 م"], 4:["11:40 ص","4:00 م"],
                  6:["2:00 م","3:00 م","4:00 م","5:00 م","6:00 م","7:00 م","8:00 م","9:00 م"] },
     avail:"الأحد – الخميس والسبت",
-    about:"أخصائية نطق وتواصل معتمدة، متخصصة في دعم الأطفال الذين يعانون من التأتأة وتأخر النطق ومشاكل نطق الأحرف. تقدم جلسات تقييم وجلسات ممارسة فردية."
+    about:"أخصائية نطق وتخاطب مرخّصة من الهيئة السعودية للتخصصات الصحية، مقرّها الرياض. تعمل مع الأطفال في التأتأة وتأخر النطق ومشاكل نطق الأحرف، وتبدأ مع كل حالة بجلسة تقييم تُحدَّد فيها الاحتياجات وتُوضع خطة الجلسات، ثم جلسات ممارسة وتمارين.",
+    credentials:[
+      "مرخّصة من الهيئة السعودية للتخصصات الصحية",
+      "أخصائية نطق وتخاطب — الرياض"
+    ],
+    focus:["التأتأة","تأخر النطق","مشاكل نطق الأحرف","تقييم ووضع خطة علاجية"],
+    photo:"assets/shawq.jpg",
+    reviews:[
+      {text:"مرره شكراً، ربي يبارك لكم ويوفقكم. التقرير راائع ومفييد، يسّرتولي أمري، ربي بييسرلكم ويسخّرلكم كل خيير."},
+      {text:"ابني متحسّن كثير بفضل الله ثم بفضل جهودكم وجهود الأخصائية، الله يسعدها. لو عليّ ما أفوّت له ولا جلسة، جداً تغيّر والكل ملاحظ، وأنا سعيدة جداً بهذا التحسن."},
+      {text:"الجلسة جميلة وحسّيت بفرق في ابني، أحسه مركّز معاي وأحرفه أوضح."},
+      {text:"الله يسعدك يا رب، شكراً لك. فرصة سعيدة إني تعرّفت عليك، ومرررة أشكرك على ابني. تغيير مرة وهذا بفضل ربي ثم جهودك. كلمة شكراً ما توفيك حقك، جرّبت معه قبل أكثر من أخصائيات وكان يصيح، بس شفت أول مرة شلون فرحته معاك وأسلوبك وطريقتك في جذبه، وشلون تحمّس. حمّستني إني أكمل معاك."},
+      {text:"شكراً لكم، شهادتي فيكم مجروحة. دقة بالوقت ولطافة للأخصائية ما شاء الله تجنن. وموعدنا الجاي معكم يوم السبت بإذن الله."},
+      {text:"ممتاز جدددداً، الله يعطيها العافية الأخصائية. جلست معاي وعطتني وقتي وشرحت لي بالتفصيل عن وضع ابنتي وكيف أنمّي مهاراتها اللغوية بالبيت، وحابة أكمل معاها."}
+    ],
+    insta:"dr_speech1",
   },
   {
     id:2, name:"اختبار", spec:"مختص تجريبي",
@@ -550,6 +565,12 @@ const Ico = {
 /* ── SHARED ── */
 
 function Avatar({ p, size=60 }) {
+  if (p.photo) return (
+    <img src={p.photo} alt={p.name} style={{
+      width:size,height:size,borderRadius:14,objectFit:"cover",flexShrink:0,
+      border:"1px solid var(--line)"
+    }}/>
+  );
   return (
     <div style={{
       width:size,height:size,borderRadius:16,
@@ -865,6 +886,55 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
           <p style={{fontSize:13.5,color:"var(--txts)",lineHeight:1.9}}>{p.about}</p>
         </div>
 
+        {p.credentials && (
+        <div style={{
+          background:"white",borderRadius:16,padding:20,
+          marginBottom:14,
+          boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
+          border:"1px solid var(--line)"
+        }}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+            <div style={{width:40,height:40,borderRadius:16,
+              background:"var(--sand)",border:"1px solid var(--pbg)",
+              display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.badgeLg ? Ico.badgeLg("var(--p)") : Ico.check("var(--p)")}</div>
+            <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>المؤهلات والخبرة</h3>
+          </div>
+          {p.credentials.map((c,i)=>(
+            <div key={i} style={{display:"flex",alignItems:"center",gap:11,
+              padding:"11px 0",
+              borderBottom:i<p.credentials.length-1?"1px solid #F3F5F3":"none"}}>
+              <span style={{width:5,height:5,borderRadius:"50%",background:"var(--acc)",flexShrink:0}}/>
+              <span style={{fontSize:13,color:"var(--ink2)",lineHeight:1.7}}>{c}</span>
+            </div>
+          ))}
+        </div>
+        )}
+
+        {p.focus && (
+        <div style={{
+          background:"white",borderRadius:16,padding:20,
+          marginBottom:14,
+          boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)",
+          border:"1px solid var(--line)"
+        }}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:14}}>
+            <div style={{width:40,height:40,borderRadius:16,
+              background:"var(--sand)",border:"1px solid var(--pbg)",
+              display:"flex",alignItems:"center",justifyContent:"center"}}>{Ico.speech("var(--p)",20)}</div>
+            <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>الحالات التي تتعامل معها</h3>
+          </div>
+          <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+            {p.focus.map(f=>(
+              <span key={f} style={{
+                background:"var(--sand)",color:"var(--ink2)",
+                borderRadius:999,padding:"7px 14px",fontSize:11.5,fontWeight:500,
+                border:"1px solid var(--line)"
+              }}>{f}</span>
+            ))}
+          </div>
+        </div>
+        )}
+
         <div style={{
           background:"white",borderRadius:16,padding:20,
           marginBottom:20,
@@ -901,6 +971,47 @@ function ProviderDetail({ p, svc, onBook, onBack }) {
             alignItems:"center",justifyContent:"center"}}>{Ico.cal("white")}</div>
           احجز جلسة الآن
         </button>
+
+        {p.reviews && p.reviews.length>0 && (
+          <div style={{marginTop:26}}>
+            <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:14}}>
+              <h3 style={{fontSize:14.5,fontWeight:600,color:"var(--txt)"}}>آراء المستفيدين</h3>
+              <div style={{display:"flex",alignItems:"center",gap:7}}>
+                <div style={{display:"flex",gap:2}}>
+                  {[1,2,3,4,5].map(i=><span key={i}>{Ico.star(true)}</span>)}
+                </div>
+                <span style={{fontSize:12,color:"var(--txts)",fontWeight:500}}>
+                  5.0 · {p.reviews.length} آراء
+                </span>
+              </div>
+            </div>
+
+            <div style={{display:"flex",flexDirection:"column",gap:10}}>
+              {p.reviews.map((r,i)=>(
+                <div key={i} style={{
+                  background:"white",borderRadius:16,padding:"16px 18px",
+                  border:"1px solid var(--line)",
+                  boxShadow:"0 1px 2px rgba(35,48,44,.03), 0 8px 22px rgba(35,48,44,.045)"
+                }}>
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:10}}>
+                    <div style={{display:"flex",alignItems:"center",gap:9}}>
+                      <div style={{
+                        width:30,height:30,borderRadius:"50%",background:"var(--sand)",
+                        border:"1px solid var(--line)",flexShrink:0,
+                        display:"flex",alignItems:"center",justifyContent:"center"
+                      }}>{Ico.user("var(--mut)")}</div>
+                      <span style={{fontSize:12,color:"var(--txts)",fontWeight:500}}>ولي أمر مستفيد</span>
+                    </div>
+                    <div style={{display:"flex",gap:2}}>
+                      {[1,2,3,4,5].map(n=><span key={n}>{Ico.star(true)}</span>)}
+                    </div>
+                  </div>
+                  <p style={{fontSize:13,color:"var(--ink2)",lineHeight:1.95}}>{r.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
