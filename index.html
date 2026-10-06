@@ -238,7 +238,7 @@ const SERVICES = [
 
 const PROVIDERS = [
   {
-    id:1, name:"شوق السالم", spec:"أخصائية نطق وتخاطب · مرخّصة من هيئة التخصصات الصحية",
+    id:1, slug:"shawq", name:"شوق السالم", spec:"أخصائية نطق وتخاطب · مرخّصة من هيئة التخصصات الصحية",
     sessions:null, rating:null, cost:90, real:true,
     av:{bg:"#23302C",in:"شس"}, services:[1],
     availDays:[0,1,2,3,4,6],
@@ -1980,12 +1980,21 @@ function BottomNav({ page, nav }) {
   );
 }
 
+/* ── رابط مباشر لصفحة المختص: ?p=1 ── */
+const DEEP_PROV = (() => {
+  const q = new URLSearchParams(location.search).get("p");
+  if(!q) return null;
+  const prov = PROVIDERS.find(x => String(x.id)===q || x.slug===q);
+  if(!prov) return null;
+  return { prov, svc: SERVICES.find(s => prov.services.includes(s.id)) || null };
+})();
+
 /* ── ROOT APP ── */
 
 function App() {
-  const [page,    setPage]    = useState("home");
-  const [svc,     setSvc]     = useState(null);
-  const [prov,    setProv]    = useState(null);
+  const [page,    setPage]    = useState(DEEP_PROV ? "detail" : "home");
+  const [svc,     setSvc]     = useState(DEEP_PROV ? DEEP_PROV.svc  : null);
+  const [prov,    setProv]    = useState(DEEP_PROV ? DEEP_PROV.prov : null);
   const [bk,      setBk]      = useState(null);
   const [userInfo,setUserInfo] = useState(null);
 
@@ -2007,7 +2016,7 @@ function App() {
       {page==="detail" && prov && (
         <ProviderDetail p={prov} svc={svc}
           onBook={()=>nav("userinfo")}
-          onBack={()=>nav("providers")}/>
+          onBack={()=>nav(svc ? "providers" : "home")}/>
       )}
       {page==="userinfo" && prov && (
         <UserInfoPage prov={prov} svc={svc}
